@@ -69,12 +69,9 @@ case $MODE in
     # this may lead to unexpected error when an incompatible file exists outside of the target directories
     for dir in "${DIR_ARRAY[@]}"
     do
-      print_yellow "Running eslint in $dir..."
-      (set -x; npx eslint  --fix "$dir/**/*.$EXTENSIONS")
-      print_yellow "Running prettier in $dir..."
-      (set -x; npx prettier --log-level warn --config $PRETTIER_CONFIG --write "$dir/**/*.$EXTENSIONS" ||
-        (echo -e "\033[91mNot all files using prettier code style. This may be fixed by running\033[0m \033[1mnpm run lint fix\033[0m" &&
-        exit 1))
+      print_yellow "Checking $dir..."
+      (set -x; npx eslint --no-error-on-unmatched-pattern --fix "$dir/**/*.$EXTENSIONS")
+      (set -x; npx prettier --log-level warn --config $PRETTIER_CONFIG --write "$dir/**/*.$EXTENSIONS")
     done
     ;;
 
@@ -83,9 +80,8 @@ case $MODE in
     # this may lead to unexpected error when an incompatible file exists outside of the target directories
     for dir in "${DIR_ARRAY[@]}"
     do
-      print_yellow "Running eslint in $dir..."
-      (set -x; npx eslint "$dir/**/*.$EXTENSIONS")
-      print_yellow "Running prettier in $dir..."
+      print_yellow "Checking $dir..."
+      (set -x; npx eslint --no-error-on-unmatched-pattern "$dir/**/*.$EXTENSIONS")
       (set -x; npx prettier --config $PRETTIER_CONFIG --check "$dir/**/*.$EXTENSIONS" ||
         (echo -e "\033[91mNot all files using prettier code style. This may be fixed by running\033[0m \033[1mnpm run lint fix\033[0m" &&
         exit 1))
