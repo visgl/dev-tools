@@ -2,7 +2,7 @@
   "name": "@vis.gl/ts-plugins",
   "description": "TypeScript plugins for vis.gl frameworks",
   "license": "MIT",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "type": "module",
   "publishConfig": {
     "access": "public"
@@ -43,13 +43,12 @@
   },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "dependencies": {
     "@luma.gl/constants": "^9.0.0",
     "minimatch": "^3.0.0",
-    "typescript": "^5.2.2",
-    "ts-patch": "^3.1.2"
+    "ts-patch": "^3.1.2",
+    "typescript": "^5.2.2"
   },
   "engines": {
     "node": ">= 18"
