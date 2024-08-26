@@ -33,12 +33,13 @@ const matchPath = createMatchPath(paths);
 export const resolve: ResolveHook = (specifier, context, nextResolver) => {
   const mappedSpecifier = matchPath(specifier);
   if (mappedSpecifier) {
+    const fileUrl = pathToFileURL(mappedSpecifier);
     if (mappedSpecifier.match(/(\/\*|\.jsx?|\.tsx?|\.cjs|\.json)$/)) {
-      specifier = pathToFileURL(mappedSpecifier).pathname;
+      specifier = fileUrl.pathname;
     } else if (mappedSpecifier.includes('/dist/')) {
-      specifier = `${pathToFileURL(mappedSpecifier)}.js`;
+      specifier = getValidPath(`${fileUrl}.js`, `${fileUrl}/index.js`) || fileUrl.toString();
     } else {
-      specifier = `${pathToFileURL(mappedSpecifier)}`;
+      specifier = fileUrl.toString();
     }
   }
   // @ts-expect-error omitted arguments are populated by Node.js

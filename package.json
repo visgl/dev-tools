@@ -7,14 +7,14 @@
     "modules/*"
   ],
   "scripts": {
-    "bootstrap": "yarn install-fast && ocular-bootstrap",
+    "bootstrap": "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn && ocular-bootstrap",
     "build": "ocular-clean && tspc -b modules/dev-tools/tsconfig.json && ocular-build",
     "clean": "ocular-clean",
     "cover": "ocular-test cover",
     "lint": "ocular-lint",
     "test": "ocular-test node",
-    "publish-devtools-beta": "ocular-publish beta",
-    "publish-devtools-prod": "ocular-publish prod",
+    "publish-beta": "ocular-publish beta",
+    "publish-prod": "ocular-publish prod",
     "pre-commit": "yarn lint",
     "pre-push": "ocular-test fast"
   },

@@ -20,7 +20,7 @@ let ocularConfig = {
   entry: {
     test: 'test/node.ts',
     'test-browser': 'test/index.html',
-    size: 'test/size/import-nothing.js'
+    size: []
   }
 };
 

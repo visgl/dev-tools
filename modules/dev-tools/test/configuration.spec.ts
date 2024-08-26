@@ -3,8 +3,6 @@ import test from 'tape-promise/tape';
 import {getESLintConfig, getPrettierConfig} from '@vis.gl/dev-tools/configuration';
 
 test('dev-tools#getConfig', (t) => {
-  const mockBabelApi = {cache: {using: () => {}}, env: (env) => env};
-
   let config = getESLintConfig();
   t.equals(typeof config, 'object');
 

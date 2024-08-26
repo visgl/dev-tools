@@ -6,6 +6,7 @@
     "modules/*/src"
   ],
   "references": [
-    {"path": "modules/dev-tools"}
+    {"path": "modules/dev-tools"},
+    {"path": "modules/ts-plugins"}
   ]
 }
