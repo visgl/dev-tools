@@ -1,11 +1,7 @@
-const {getESLintConfig} = require('ocular-dev-tools/configuration');
+const {getESLintConfig} = require('@vis.gl/dev-tools/configuration');
 
 module.exports = getESLintConfig({
   overrides: {
-    parserOptions: {
-      project: ['./tsconfig.json']
-    },
-
     rules: {
       'import/no-extraneous-dependencies': 0,
       'import/no-unresolved': 0,
@@ -17,8 +13,6 @@ module.exports = getESLintConfig({
 
     env: {
       node: true
-    },
-
-    ignorePatterns: ['modules/gatsby-theme-ocular']
+    }
   }
 });

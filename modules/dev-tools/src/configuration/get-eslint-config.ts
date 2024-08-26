@@ -16,11 +16,8 @@ const DEFAULT_CONFIG = {
     'plugin:import/recommended'
   ],
   plugins: ['import'],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2020,
-    sourceType: 'module', // we want to use ES modules
-    project: './tsconfig.json'
+    ecmaVersion: 2020
   },
   env: {
     // Note: also sets ecmaVersion
@@ -55,6 +52,11 @@ const DEFAULT_CONFIG = {
       // babel-eslint can process TS files, but it doesn't understand types
       // typescript-eslint has some more advanced rules with type checking
       files: ['**/*.ts', '**/*.tsx', '**/*.d.ts'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        sourceType: 'module', // we want to use ES modules
+        project: './tsconfig.json'
+      },
       extends: ['plugin:@typescript-eslint/recommended-type-checked'],
       plugins: ['@typescript-eslint'],
       rules: {

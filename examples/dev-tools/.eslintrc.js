@@ -1,10 +1,11 @@
-const {getESLintConfig} = require('ocular-dev-tools');
+const {getESLintConfig} = require('@vis.gl/dev-tools/configuration');
 
-const config = getESLintConfig({react: '16.8.2'});
-
-// Make any changes to default config here
-
-// Uncomment to log the eslint config
-// console.debug(config);
+const config = getESLintConfig({
+  overrides: {
+    // Make any changes to default config here
+  },
+  // Log the resolved config
+  debug: true
+});
 
 module.exports = config;

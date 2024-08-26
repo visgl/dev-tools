@@ -1,4 +1,4 @@
-/** @typedef {import('ocular-dev-tools').OcularConfig} OcularConfig */
+/** @typedef {import('@vis.gl/dev-tools').OcularConfig} OcularConfig */
 import {resolve} from 'path';
 
 /** @type {OcularConfig} */

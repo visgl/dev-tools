@@ -10,17 +10,20 @@ MODE=$1
 DEV_TOOLS_DIR=$(dirname $0)/..
 
 DIRECTORIES=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".lint.paths"`
-if [[ $DIRECTORIES == *","* ]]; then
-  DIRECTORIES={$DIRECTORIES}
-fi
-
 EXTENSIONS=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".lint.extensions"`
 if [[ $EXTENSIONS == *","* ]]; then
   EXTENSIONS={$EXTENSIONS}
 fi
 
-DIR_PATTERN="$DIRECTORIES/**/*.$EXTENSIONS"
-ROOT_PATTERN="*.$EXTENSIONS"
+DIR_PATTERN=
+IFS=',' read -r -a DIR_ARRAY <<< "$DIRECTORIES"
+for dir in "${DIR_ARRAY[@]}"
+do
+  DIR_PATTERN+="$dir/**/*.$EXTENSIONS "
+done
+
+# if no prettier config present, use default template
+PRETTIER_CONFIG=`ls .prettierrc* 2> /dev/null || echo "${PRETTIER_CONFIG:=$DEV_TOOLS_DIR/templates/.prettierrc}"`
 
 usage() {
   # TODO: Add more specific url
@@ -56,28 +59,37 @@ case $MODE in
           fi
       done
 
-      (set -x; npx prettier-check $FILES_LIST)
+      (set -x; npx prettier --config $PRETTIER_CONFIG --check $FILES_LIST)
       (set -x; npx eslint $FILES_LIST)
     fi
     ;;
 
   "fix")
-    print_yellow "Running eslint in $DIRECTORIES..."
-    (set -x; npx eslint --fix "$DIRECTORIES/**/*.$EXTENSIONS")
-
-    print_yellow "Running prettier in $DIRECTORIES..."
-    (set -x; npx prettier --log-level warn --write "$DIR_PATTERN" "$ROOT_PATTERN")
+    # eslint has a issue with {dir1,dir2} style filters - it tries to enumerate all files at root before matching
+    # this may lead to unexpected error when an incompatible file exists outside of the target directories
+    for dir in "${DIR_ARRAY[@]}"
+    do
+      print_yellow "Running eslint in $dir..."
+      (set -x; npx eslint  --fix "$dir/**/*.$EXTENSIONS")
+      print_yellow "Running prettier in $dir..."
+      (set -x; npx prettier --log-level warn --config $PRETTIER_CONFIG --write "$dir/**/*.$EXTENSIONS" ||
+        (echo -e "\033[91mNot all files using prettier code style. This may be fixed by running\033[0m \033[1mnpm run lint fix\033[0m" &&
+        exit 1))
+    done
     ;;
 
   *)
-    print_yellow "Running eslint in $DIRECTORIES..."
-    (set -x; npx eslint "$DIRECTORIES/**/*.$EXTENSIONS")
-
-    print_yellow "Checking prettier code style in $DIRECTORIES..."
-    (set -x; npx prettier-check  "$DIR_PATTERN" "$ROOT_PATTERN" ||
-      (echo -e "\033[91mNot all files using prettier code style. This may be fixed by running\033[0m \033[1mnpm run lint fix\033[0m" &&
-      exit 1))
-
+    # eslint has a issue with {dir1,dir2} style filters - it tries to enumerate all files at root before matching
+    # this may lead to unexpected error when an incompatible file exists outside of the target directories
+    for dir in "${DIR_ARRAY[@]}"
+    do
+      print_yellow "Running eslint in $dir..."
+      (set -x; npx eslint "$dir/**/*.$EXTENSIONS")
+      print_yellow "Running prettier in $dir..."
+      (set -x; npx prettier --config $PRETTIER_CONFIG --check "$dir/**/*.$EXTENSIONS" ||
+        (echo -e "\033[91mNot all files using prettier code style. This may be fixed by running\033[0m \033[1mnpm run lint fix\033[0m" &&
+        exit 1))
+    done
     ;;
   esac
 
