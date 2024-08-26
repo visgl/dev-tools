@@ -1,5 +1,5 @@
-# ocular-dev-tools
+# @visgl/dev-tools
 
-Experimental dev tools for our open source Javascript frameworks
+Dev tools (build, lint, test, publish) for vis.gl's open source Javascript frameworks
 
-For documentation, see [https://uber-web.github.io/ocular]
+For documentation, see [https://github.com/visgl/dev-tools/tree/master/modules/dev-tools/docs]

@@ -125,8 +125,6 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
     sourcemap = false
   } = opts;
 
-  let babelConfig;
-
   let externalPackages = Object.keys(packageInfo.peerDependencies || {});
   if (typeof externals === 'string') {
     externalPackages = externalPackages.concat((externals as string).split(','));
@@ -185,7 +183,7 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
       plugins: config.plugins!.map((item) => {
         return {
           name: item.name,
-          options: item.name === 'babel' ? babelConfig : externalGlobals
+          options: externalGlobals
         };
       })
     };

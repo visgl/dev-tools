@@ -19,13 +19,6 @@ export type OcularConfig = {
 
   nodeAliases?: {[module: string]: string};
 
-  babel?:
-    | {
-        configPath?: string;
-        extensions?: string[];
-      }
-    | false;
-
   bundle?: {
     target?: string[];
     globalName?: string;
@@ -73,13 +66,6 @@ export type MaterializedOcularConfig = {
   esm: boolean;
 
   aliases: {[module: string]: string};
-
-  babel:
-    | {
-        configPath: string;
-        extensions: string[];
-      }
-    | false;
 
   bundle: {
     target?: string[];
@@ -138,20 +124,6 @@ export async function getOcularConfig(
     ocularPath: ocularRoot,
 
     esm: getModuleInfo(packageRoot)?.packageInfo.type === 'module',
-
-    babel:
-      userConfig.babel !== false
-        ? {
-            configPath: getValidPath(
-              resolve(packageRoot, './.babelrc'),
-              resolve(packageRoot, './.babelrc.js'),
-              resolve(packageRoot, './.babelrc.cjs'),
-              resolve(packageRoot, './babel.config.js'),
-              resolve(packageRoot, './babel.config.cjs')
-            )!,
-            extensions: ['.js', '.jsx', '.mjs', '.ts', '.tsx']
-          }
-        : false,
 
     bundle: {
       globals: {}

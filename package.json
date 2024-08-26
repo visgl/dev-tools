@@ -4,23 +4,21 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "modules/dev-tools"
+    "modules/*"
   ],
   "scripts": {
     "bootstrap": "yarn install-fast && ocular-bootstrap",
-    "install-fast": "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn",
     "build": "ocular-clean && tspc -b modules/dev-tools/tsconfig.json && ocular-build",
     "clean": "ocular-clean",
     "cover": "ocular-test cover",
     "lint": "ocular-lint",
     "test": "ocular-test node",
-    "publish-devtools-beta": "(cd modules/dev-tools; npm run publish-beta)",
-    "publish-devtools-prod": "(cd modules/dev-tools; npm run publish-prod)",
+    "publish-devtools-beta": "ocular-publish beta",
+    "publish-devtools-prod": "ocular-publish prod",
     "pre-commit": "yarn lint",
     "pre-push": "ocular-test fast"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-import-assertions": "^7.20.0",
     "@luma.gl/constants": "^9.0.0-beta",
     "pre-commit": "^1.2.2",
     "pre-push": "^0.1.1",

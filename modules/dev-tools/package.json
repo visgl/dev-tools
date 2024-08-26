@@ -1,22 +1,25 @@
 {
-  "name": "ocular-dev-tools",
-  "description": "Dev tools for our Javascript frameworks",
+  "name": "@vis.gl/dev-tools",
+  "description": "Dev tools for vis.gl frameworks",
   "license": "MIT",
-  "version": "2.0.0-alpha.35",
+  "version": "1.0.0-alpha.0",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
-    "javascript"
+    "javascript",
+    "devops"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/uber-web/ocular/"
+    "url": "https://github.com/visgl/dev-tools"
   },
   "files": [
     "src",
     "scripts",
     "templates",
-    "dist",
-    "CHANGELOG.md"
+    "dist"
   ],
   "exports": {
     ".": {
@@ -28,22 +31,6 @@
       "types": "./dist/configuration/index.d.ts",
       "require": "./dist/configuration/index.cjs",
       "import": "./dist/configuration/index.js"
-    },
-    "./ts-transform-version-inline": {
-      "require": "./dist/ts-plugins/ts-transform-version-inline/index.cjs",
-      "import": "./dist/ts-plugins/ts-transform-version-inline/index.js"
-    },
-    "./ts-transform-append-extension": {
-      "require": "./dist/ts-plugins/ts-transform-append-extension/index.cjs",
-      "import": "./dist/ts-plugins/ts-transform-append-extension/index.js"
-    },
-    "./ts-transform-remove-glsl-comments": {
-      "require": "./dist/ts-plugins/ts-transform-remove-glsl-comments/index.cjs",
-      "import": "./dist/ts-plugins/ts-transform-remove-glsl-comments/index.js"
-    },
-    "./ts-transform-inline-webgl-constants": {
-      "require": "./dist/ts-plugins/ts-transform-inline-webgl-constants/index.cjs",
-      "import": "./dist/ts-plugins/ts-transform-inline-webgl-constants/index.js"
     }
   },
   "types": "./dist/index.d.ts",
@@ -60,23 +47,11 @@
     "ocular-test": "./scripts/test.js"
   },
   "scripts": {
-    "build": "(cd ../.. && ocular-build)",
-    "publish-prod": "npm run build && npm publish",
-    "publish-beta": "npm run build && npm publish --tag beta"
   },
   "dependencies": {
-    "@babel/cli": "^7.14.5",
-    "@babel/core": "^7.14.5",
-    "@babel/eslint-parser": "^7.14.5",
-    "@babel/plugin-transform-runtime": "^7.14.5",
-    "@babel/preset-env": "^7.14.5",
-    "@babel/preset-react": "^7.14.5",
-    "@babel/preset-typescript": "^7.14.5",
-    "@babel/runtime": "7.14.5",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.0",
     "@probe.gl/test-utils": "^4.0.6",
-    "babel-plugin-version-inline": "^1.0.0",
     "c8": "^7.12.0",
     "coveralls": "^3.0.3",
     "deepmerge": "^4.2.2",
@@ -84,7 +59,6 @@
     "esbuild-plugin-external-global": "^1.0.1",
     "eslint": "^8.52.0",
     "eslint-config-prettier": "^8.0.0",
-    "eslint-plugin-babel": "^5.3.1",
     "eslint-plugin-import": "^2.28.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-markdown": "^2.2.0",

@@ -1,6 +1,6 @@
 import test from 'tape-promise/tape';
 // @ts-expect-error Aliased import
-import {getBabelConfig, getESLintConfig, getPrettierConfig} from 'ocular-dev-tools/configuration';
+import {getESLintConfig, getPrettierConfig} from '@vis.gl/dev-tools/configuration';
 
 test('dev-tools#getConfig', (t) => {
   const mockBabelApi = {cache: {using: () => {}}, env: (env) => env};
@@ -10,9 +10,6 @@ test('dev-tools#getConfig', (t) => {
 
   config = getPrettierConfig();
   t.equals(typeof config, 'object');
-
-  config = getBabelConfig(mockBabelApi);
-  t.equals(typeof config, 'function');
 
   t.end();
 });

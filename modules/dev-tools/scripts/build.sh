@@ -3,9 +3,7 @@
 set -e
 
 DEV_TOOLS_DIR=$(dirname $0)/..
-CONFIG=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".babel.configPath"`
 MODULES=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".modules" | sed -E "s/,/ /g"`
-EXTENSIONS=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".babel.extensions"`
 TS_PROJECT=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".typescript.project"`
 IS_ESM=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".esm"`
 
@@ -20,10 +18,6 @@ build_src() {
   OUT_DIR=$1
   TARGET=$2
   check_target $TARGET
-
-  if [ ! -z "$CONFIG" ]; then
-    (set -x; BABEL_ENV=$TARGET npx babel src --config-file $CONFIG --out-dir $OUT_DIR --copy-files --source-maps --extensions $EXTENSIONS)
-  fi
 }
 
 build_module_esm() {

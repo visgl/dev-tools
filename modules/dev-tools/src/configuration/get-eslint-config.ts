@@ -1,5 +1,5 @@
 import deepMerge from 'deepmerge';
-import {getValidPath, ocularRoot} from '../utils/utils.js';
+import {ocularRoot} from '../utils/utils.js';
 import {inspect} from 'util';
 import {resolve} from 'path';
 
@@ -9,14 +9,6 @@ const DEFAULT_OPTIONS = {
   react: false
 } as const;
 
-const babelConfig = getValidPath(
-  './.babelrc',
-  './.babelrc.js',
-  './.babelrc.cjs',
-  './babel.config.js',
-  './babel.config.cjs'
-);
-
 const DEFAULT_CONFIG = {
   extends: [
     localRules('./eslint-config-uber-es2015/eslintrc.json'),
@@ -24,14 +16,11 @@ const DEFAULT_CONFIG = {
     'plugin:import/recommended'
   ],
   plugins: ['import'],
-  parser: babelConfig ? '@babel/eslint-parser' : '',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020,
-    // @babel/eslint-parser issues https://github.com/babel/babel/issues/11975
-    requireConfigFile: false,
-    babelOptions: {
-      configFile: babelConfig
-    }
+    sourceType: 'module', // we want to use ES modules
+    project: './tsconfig.json'
   },
   env: {
     // Note: also sets ecmaVersion
@@ -66,11 +55,6 @@ const DEFAULT_CONFIG = {
       // babel-eslint can process TS files, but it doesn't understand types
       // typescript-eslint has some more advanced rules with type checking
       files: ['**/*.ts', '**/*.tsx', '**/*.d.ts'],
-      parser: '@typescript-eslint/parser',
-      parserOptions: {
-        sourceType: 'module', // we want to use ES modules
-        project: './tsconfig.json'
-      },
       extends: ['plugin:@typescript-eslint/recommended-type-checked'],
       plugins: ['@typescript-eslint'],
       rules: {

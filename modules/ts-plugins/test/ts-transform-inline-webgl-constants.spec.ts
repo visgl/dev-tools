@@ -1,7 +1,7 @@
 import test from 'tape-promise/tape';
 import {transpile, assertSourceEqual} from './test-transformer.js';
 // @ts-expect-error Aliased import, remapped to valid path in esm-loader
-import inlineConstants from 'ocular-dev-tools/ts-plugins/ts-transform-inline-webgl-constants';
+import inlineConstants from '@vis.gl/ts-plugins/ts-transform-inline-webgl-constants';
 
 const testCases = [
   {

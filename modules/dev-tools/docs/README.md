@@ -76,8 +76,6 @@ A file `.ocularrc.js` can be placed at the root of the package to customize the 
 - `lint` - options to control eslint behavior
   + `paths` (Arrray) - directories to include when linting. Default `['modules', 'src']`
   + `extensions` (Array) - file extensions to include when linting. Default `['js', 'md']`
-- `babel` - options to control babel behavior
-  + `extensions` - List of file extensions (prefixed with `.`) that `babel` will process. Default `['.es6', '.js', '.es', '.jsx', '.mjs']`
 - `aliases` (Object) - Module aliases to use in tests. Any import from a submodule is mapped to its source. Use this object to define additional mappings, for example `"test-data": "./test/sample-data`.
 - `nodeAliases` (Object) - Module aliases to use in node tests only.
 - `typescript`
@@ -96,25 +94,6 @@ A file `.ocularrc.js` can be placed at the root of the package to customize the 
   + `size` (String | String[]) - metrics entry point(s). Can be a `.js` or `.ts` file. Default `./test/size.ts`.
 - `browserTest` (Object) - options for browser tests. Passed to [BrowserTestDriver.run](https://uber-web.github.io/probe.gl/#/documentation/api-reference-testing/browsertestdriver).
 
-
-#### babel
-
-You may extend the default eslint config with a `.babelrc.js` or `babel.config.js` at the project root:
-
-```js
-// .babelrc.js
-const {getBabelConfig} = require('ocular-dev-tools/configuration');
-
-module.exports = getBabelConfig({
-  react: true,
-  // specify custom configs
-  overrides: {
-    overrides: [
-      // babel overrides api
-    ]
-  }
-});
-```
 
 #### eslint
 
@@ -158,5 +137,5 @@ To enable ESM mode:
 
 - Add `type: 'module'` to the root `package.json` and each submodule's `package.json`s.
 - Add `compilerOptions.module: 'esnext'` to `tsconfig.json`.
-- ES5-style `require()` and `module.exports` must be removed from all `.js` files. Some dev dependencies, for example babel and eslint, may not support ESM syntax. In this case, rename the config files to use the `.cjs` extension so that they can be imported successfully.
+- ES5-style `require()` and `module.exports` must be removed from all `.js` files. Some dev dependencies, for example eslint, may not support ESM syntax. In this case, rename the config files to use the `.cjs` extension so that they can be imported successfully.
 - When importing directly from a non-TypeScript file, the file extension must be specified. E.g. `import './init'` now becomes `import './init.js'`.

@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2020",
+    "target": "esnext",
     "module": "esnext",
-    "jsx": "react",
     "strict": true,
     "noImplicitAny": false,
     "allowJs": true,
@@ -20,6 +19,11 @@
     "test"
   ],
   "exclude":[
-    "node_modules"
-  ]
+    "**/node_modules",
+    "**/dist"
+  ],
+  "paths": {
+    "@vis.gl/dev-tools": ["modules/dev-tools/src"],
+    "@vis.gl/ts-plugins": ["modules/ts-plugins/src"]
+  }
 }

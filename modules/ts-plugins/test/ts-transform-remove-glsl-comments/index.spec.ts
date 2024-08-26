@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 import test from 'tape-promise/tape';
 import {transpile, assertSourceEqual} from '../test-transformer.js';
 // @ts-expect-error Aliased import, remapped to valid path in esm-loader
-import removeGLSLComments from 'ocular-dev-tools/ts-plugins/ts-transform-remove-glsl-comments';
+import removeGLSLComments from '@vis.gl/ts-plugins/ts-transform-remove-glsl-comments';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

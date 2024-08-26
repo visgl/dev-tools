@@ -1,0 +1,57 @@
+{
+  "name": "@vis.gl/ts-plugins",
+  "description": "TypeScript plugins for vis.gl frameworks",
+  "license": "MIT",
+  "version": "1.0.0-alpha.0",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/visgl/dev-tools"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    },
+    "./ts-transform-version-inline": {
+      "require": "./dist/ts-transform-version-inline/index.cjs",
+      "import": "./dist/ts-transform-version-inline/index.js"
+    },
+    "./ts-transform-append-extension": {
+      "require": "./dist/ts-transform-append-extension/index.cjs",
+      "import": "./dist/ts-transform-append-extension/index.js"
+    },
+    "./ts-transform-remove-glsl-comments": {
+      "require": "./dist/ts-transform-remove-glsl-comments/index.cjs",
+      "import": "./dist/ts-transform-remove-glsl-comments/index.js"
+    },
+    "./ts-transform-inline-webgl-constants": {
+      "require": "./dist/ts-transform-inline-webgl-constants/index.cjs",
+      "import": "./dist/ts-transform-inline-webgl-constants/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "scripts": {
+  },
+  "dependencies": {
+    "@luma.gl/constants": "^9.0.0",
+    "minimatch": "^3.0.0",
+    "typescript": "^5.2.2",
+    "ts-patch": "^3.1.2"
+  },
+  "engines": {
+    "node": ">= 18"
+  }
+}

@@ -1,7 +1,7 @@
 import test from 'tape-promise/tape';
 import {transpile, assertSourceEqual} from './test-transformer.js';
 // @ts-expect-error Aliased import, remapped to valid path in esm-loader
-import appendExtension from 'ocular-dev-tools/ts-plugins/ts-transform-append-extension';
+import appendExtension from '@vis.gl/ts-plugins/ts-transform-append-extension';
 
 const input = `\
 export type { TypedArray } from "./types";
