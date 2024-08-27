@@ -90,7 +90,7 @@ function getGitTag(): string | null {
 
 function getReleaseNotes(version: string): string | null {
   let changelog = readFileSync('CHANGELOG.md', 'utf-8');
-  const header = changelog.match(new RegExp(`^###.*\\b${version.replace('v', '')}\\b.*$`, 'm'));
+  const header = changelog.match(new RegExp(`^##.*\\b${version.replace('v', '')}\\b.*$`, 'm'));
   if (!header) {
     return null;
   }
