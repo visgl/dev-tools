@@ -1,6 +1,6 @@
 // / For bundles published to npm
 import fs from 'fs';
-import {join} from 'path';
+import {join, dirname} from 'path';
 import util from 'util';
 import {getOcularConfig} from '../helpers/get-ocular-config.js';
 import ext from 'esbuild-plugin-external-global';
@@ -104,11 +104,14 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
   // This script must be executed in a submodule's directory
   const packageRoot = process.cwd();
   const packageInfo = JSON.parse(fs.readFileSync(join(packageRoot, 'package.json'), 'utf-8'));
+  const projectRoot = dirname(packageRoot).endsWith('modules')
+    ? join(packageRoot, '../..')
+    : packageRoot;
 
   const devMode = opts.env === 'dev';
 
   const ocularConfig = await getOcularConfig({
-    root: join(packageRoot, '../..'),
+    root: projectRoot,
     aliasMode: devMode ? 'src' : 'dist'
   });
 

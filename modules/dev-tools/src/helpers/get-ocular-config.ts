@@ -27,6 +27,10 @@ export type OcularConfig = {
     globals?: {[pattern: string]: string};
   };
 
+  typescript?: {
+    project: string;
+  };
+
   lint?: {
     paths?: string[];
     extensions?: string[];
@@ -126,7 +130,7 @@ export async function getOcularConfig(
     },
 
     typescript: {
-      project: ''
+      project: 'tsconfig.json'
     },
 
     lint: {

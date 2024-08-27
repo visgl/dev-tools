@@ -5,11 +5,12 @@ set -e
 DEV_TOOLS_DIR=$(dirname $0)/..
 MODULES=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".modules" | sed -E "s/,/ /g"`
 IS_ESM=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".esm"`
+TS_PROJECT=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".typescript.project"`
 
 build_src() {
   OUT_DIR=$1
   TARGET=$2
-  (set -x; npx tspc --declaration --declarationMap --sourceMap --target $TARGET --outDir $OUT_DIR --project ./tsconfig.json)
+  (set -x; npx tspc --declaration --declarationMap --sourceMap --target $TARGET --outDir $OUT_DIR --project $TS_PROJECT)
 }
 
 build_module_esm() {
