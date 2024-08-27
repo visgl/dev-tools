@@ -16,11 +16,10 @@ npx ocular-test [mode]
 
 ## Modes
 
-- `full` (default) - run lint, unit tests in node and headless browser
-- `fast` - run lint in pre-commit mode, unit tests in node
-- `dist` - run unit tests with transpiled (es5) code
+- `full` (default) - run unit tests in node and headless browser from source code
+- `dist` - run unit tests in node and headless browser from transpiled code
 - `cover` - run unit tests and generate coverage report
-- `ci` - run lint, coverage, metrics and unit tests in headless browser
+- `ci` - run coverage tests and report result to coveralls
 - `node` - run unit tests in node
 - `node-debug` - run unit tests in node debugger
 - `browser` - run unit tests in browser (kept open for debugging)

@@ -72,18 +72,6 @@ publishToNPM() {
   fi
 }
 
-if [[ $MODE != "version-only-"* && $MODE != "help" ]]; then
-  # will build and publish to NPM
-  ocular-bootstrap
-  ocular-test
-  ocular-test dist
-else
-  # When a dependency change is cherry-picked between branches the lock file may not merge correctly
-  # Refresh the lock file so that a release can be built from a clean state
-  yarn
-fi
-git add yarn.lock
-
 case $MODE in
   "help")
     usage

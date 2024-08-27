@@ -3,9 +3,6 @@
 
 set -e
 
-# install dependencies
-yarn
-
 # prepare module directories
 PACKAGE_DIR=`pwd`
 ROOT_NODE_MODULES_DIR=$PACKAGE_DIR/node_modules
@@ -31,6 +28,3 @@ else
   yarn link
   yarn link $packageName
 fi
-
-# build the submodules
-npm run build

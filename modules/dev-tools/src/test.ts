@@ -8,8 +8,9 @@ import {getOcularConfig} from './helpers/get-ocular-config.js';
 import {BrowserTestDriver} from '@probe.gl/test-utils';
 import {createServer} from 'vite';
 
-const mode = process.argv.length >= 3 ? process.argv[2] : 'default';
-const ocularConfig = await getOcularConfig({aliasMode: mode});
+const mode = process.argv[2] ?? 'unknown';
+const source = process.argv[3] === 'dist' ? 'dist' : 'src';
+const ocularConfig = await getOcularConfig({aliasMode: source});
 const viteConfigPath = ocularConfig.vite.configPath;
 // c8 default directory for coverage data
 const CoverageTempDir = './coverage/tmp';

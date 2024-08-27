@@ -110,7 +110,7 @@ export type MaterializedOcularConfig = {
 export async function getOcularConfig(
   options: {
     root?: string;
-    aliasMode?: string;
+    aliasMode?: 'src' | 'dist';
   } = {}
 ): Promise<MaterializedOcularConfig> {
   const packageRoot = options.root || process.env.PWD!;

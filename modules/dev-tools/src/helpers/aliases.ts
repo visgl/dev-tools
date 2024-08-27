@@ -52,7 +52,7 @@ function getSubmodules(packageRoot: string): {[name: string]: ModuleInfo} {
 }
 
 export default function getAliases(
-  mode: string,
+  mode: 'src' | 'dist',
   packageRoot: string = process.env.PWD!
 ): Record<string, string> {
   const aliases: Record<string, string> = {};

@@ -29,26 +29,19 @@ generate_coverage_report() {
 }
 
 run_full_test() {
-  npm run lint
   run_test_script_pretty node
   run_test_script_pretty browser-headless
-  ocular-metrics
 }
 
 case $MODE in
   "")
-    echo "test [ 'full' | 'fast' | 'dist' | 'bench' | 'ci' | 'cover' | 'browser' | 'browser-headless' ]"
+    echo "test [ 'full' | 'dist' | 'bench' | 'ci' | 'cover' | 'browser' | 'browser-headless' ]"
     echo "Running 'full' test by default"
     run_full_test
     ;;
 
   "full")
     run_full_test
-    ;;
-
-  "fast")
-    ocular-lint pre-commit
-    run_test_script_pretty node
     ;;
 
   "node")
@@ -61,7 +54,8 @@ case $MODE in
     ;;
 
   "dist")
-    run_test_script_pretty dist
+    run_test_script_pretty node dist
+    run_test_script_pretty browser-headless dist
     ;;
 
   "cover")
@@ -71,7 +65,6 @@ case $MODE in
 
   "ci")
     # run by CI
-    npm run lint
     if [ "$COVERAGE_TEST" == "browser" ]; then
       run_test_script_pretty node
     else
@@ -79,7 +72,6 @@ case $MODE in
     fi
     run_test_script_pretty cover
     generate_coverage_report
-    ocular-metrics
     ;;
 
   "browser-headless")
