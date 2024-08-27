@@ -49,7 +49,7 @@ build_monorepo() {
             TARGET=$2
             shift ;;
         *)
-            echo -e "\033[91mUnknown option $1. ocular-build [--dist es5|esm,...] [module1,...]\033[0m"
+            echo -e "\033[91mUnknown option $1. ocular-build [--dist es5|es6,...] [module1,...]\033[0m"
             exit 1 ;;
       esac
     else
@@ -62,7 +62,7 @@ build_monorepo() {
 
   if [ -z "$MODULES" ]; then
     # Build all modules
-    MODULES=`find modules -mindepth 1 -maxdepth 1 -not \( -name ".*" \)`
+    MODULES=`node $DEV_TOOLS_DIR/dist/helpers/build-order.js`
   fi
 
   for D in ${MODULES}; do (
