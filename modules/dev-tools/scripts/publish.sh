@@ -36,15 +36,17 @@ bumpVersion() {
   stopPublish=
   if [ -z "$uncommittedChanges" ]; then
     # verify changelog
-    grep -e "^##.*\\b${newVersion}\\b" CHANGELOG.md ||
-      (print_red "\nerror: ${newVersion} not found in CHANGELOG\n" && stopPublish=1)
+    if ! grep -eq "^##.*\\b${newVersion}\\b" CHANGELOG.md; then
+      print_red "\nerror: ${newVersion} not found in CHANGELOG\n"
+      stopPublish=1
+    fi
   else
     print_red "\nerror: Working tree has uncommitted changes\n"
     stopPublish=1
   fi
 
   # if failed, reset the version bump
-  if [ "$stopPublish" == "1" ]; then
+  if [ $stopPublish -eq 1 ]; then
      git tag -d "${newVersion}"
      git reset HEAD~ &&
      exit 1
