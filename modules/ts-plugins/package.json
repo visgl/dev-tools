@@ -2,7 +2,7 @@
   "name": "@vis.gl/ts-plugins",
   "description": "TypeScript plugins for vis.gl frameworks",
   "license": "MIT",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "type": "module",
   "publishConfig": {
     "access": "public"
