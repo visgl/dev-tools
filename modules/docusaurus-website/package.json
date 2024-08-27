@@ -2,7 +2,7 @@
   "name": "@vis.gl/docusaurus-website",
   "description": "Docusaurus setup for vis.gl frameworks",
   "license": "MIT",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "type": "module",
   "publishConfig": {
     "access": "public"
