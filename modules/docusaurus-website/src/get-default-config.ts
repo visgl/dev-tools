@@ -114,7 +114,7 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
           routeBasePath: 'examples',
           sidebarItemsGenerator: () => config.exampleTableOfContents?.map(normalizeSidebarItem),
           breadcrumbs: false,
-          docItemComponent: resolve(cwd, './components/example/doc-item-component.js')
+          docItemComponent: resolve(cwd, './components/doc-item-component.js')
         }
       ],
       config.search === 'local' && [
