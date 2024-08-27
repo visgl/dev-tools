@@ -29,7 +29,7 @@ if (!tag) {
 
 /** Description of this release, parsed from CHANGELOG.md */
 const releaseNotes = getReleaseNotes(tag);
-if (!releaseNotes) {
+if (releaseNotes == null) {
   console.error('CHANGELOG NOT FOUND');
   process.exit(1);
 }
@@ -90,7 +90,7 @@ function getGitTag(): string | null {
 
 function getReleaseNotes(version: string): string | null {
   let changelog = readFileSync('CHANGELOG.md', 'utf-8');
-  const header = changelog.match(new RegExp(`^##.*\\b${version.replace('v', '')}\\b.*$`, 'm'));
+  const header = changelog.match(new RegExp(`^##.*\\bv?${version.replace('v', '')}\\b.*$`, 'm'));
   if (!header) {
     return null;
   }
