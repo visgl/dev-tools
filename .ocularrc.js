@@ -3,12 +3,6 @@ import {resolve} from 'path';
 
 /** @type {OcularConfig} */
 let ocularConfig = {
-  typescript: {
-    project: 'tsconfig.build.json'
-  },
-
-  babel: false,
-
   lint: {
     paths: ['modules']
   },

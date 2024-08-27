@@ -4,30 +4,22 @@ set -e
 
 DEV_TOOLS_DIR=$(dirname $0)/..
 MODULES=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".modules" | sed -E "s/,/ /g"`
-TS_PROJECT=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".typescript.project"`
 IS_ESM=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".esm"`
-
-check_target() {
-  if [[ ! "$1" =~ ^es5|esm ]]; then
-    echo -e "\033[91mUnknown build target $1. ocular-build [--dist es5|esm,...] [module1,...]\033[0m"
-    exit 1
-  fi
-}
 
 build_src() {
   OUT_DIR=$1
   TARGET=$2
-  check_target $TARGET
+  (set -x; npx tspc --declaration --declarationMap --sourceMap --target $TARGET --outDir $OUT_DIR --project ./tsconfig.json)
 }
 
 build_module_esm() {
-  build_src dist esm-strict
+  build_src dist es2020
   node $DEV_TOOLS_DIR/dist/build-cjs.js
 }
 
 build_module() {
   if [ -z "$1" ]; then
-    TARGETS="esm es5"
+    TARGETS="es5 es6"
   else
     TARGETS=$*
   fi
@@ -90,10 +82,6 @@ build_monorepo() {
     fi
   ); done
 }
-
-if [ ! -z "$TS_PROJECT" ]; then
-  npx tspc -b $TS_PROJECT --verbose
-fi
 
 if [ -d "modules" ]; then
   build_monorepo $*

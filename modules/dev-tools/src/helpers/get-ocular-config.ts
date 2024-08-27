@@ -27,10 +27,6 @@ export type OcularConfig = {
     globals?: {[pattern: string]: string};
   };
 
-  typescript?: {
-    project: string;
-  };
-
   lint?: {
     paths?: string[];
     extensions?: string[];
