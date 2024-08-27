@@ -36,7 +36,7 @@ bumpVersion() {
   stopPublish=
   if [ -z "$uncommittedChanges" ]; then
     # verify changelog
-    if ! grep -eq "^##.*\\b${newVersion}\\b" CHANGELOG.md; then
+    if ! grep -q -e "^##.*\\b${newVersion}\\b" CHANGELOG.md; then
       print_red "\nerror: ${newVersion} not found in CHANGELOG\n"
       stopPublish=1
     fi
