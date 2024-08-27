@@ -1,3 +1,4 @@
+import fs from 'fs';
 import {resolve, dirname} from 'path';
 import lightCodeTheme from 'prism-react-renderer/themes/nightOwlLight';
 import darkCodeTheme from 'prism-react-renderer/themes/nightOwl';
@@ -28,6 +29,32 @@ function normalizeSidebarItem(item: SidebarItem | string): SidebarItem {
   return item;
 }
 
+function getAlias(packageRoot: string, target: {[moduleName: string]: string}) {
+  const packageJsonFile = resolve(packageRoot, 'package.json');
+  if (fs.existsSync(packageJsonFile)) {
+    const packageInfo = JSON.parse(fs.readFileSync(packageJsonFile, 'utf8'));
+    target[packageInfo.name] = resolve(packageRoot, 'src');
+  }
+  return null;
+}
+
+function getAliases(root: string): {[moduleName: string]: string} {
+  const result: {[moduleName: string]: string} = {};
+  const parentPath = resolve(root, './modules');
+
+  if (fs.existsSync(parentPath)) {
+    // monorepo
+    for (const item of fs.readdirSync(parentPath)) {
+      const itemPath = resolve(parentPath, item);
+      getAlias(itemPath, result);
+    }
+  } else {
+    getAlias(root, result);
+  }
+
+  return result;
+}
+
 export type OcularWebsiteConfig = {
   /** Name of the project */
   projectName: string;
@@ -42,9 +69,16 @@ export type OcularWebsiteConfig = {
   siteUrl: string;
 
   /** Custom webpack config */
-  webpackConfig: object;
+  webpackConfig?: object;
 
-  /** Path to documentation pages (.md and .mdx), relative to the current directory */
+  /** Path to repo root, relative to the current directory
+   * @default ".."
+   */
+  rootDir?: string;
+
+  /** Path to documentation pages (.md and .mdx), relative to the current directory
+   * @default "../docs"
+   */
   docsDir?: string;
   /** Documentation table of contents */
   docsTableOfContents: SidebarItem[];
@@ -60,17 +94,30 @@ export type OcularWebsiteConfig = {
 
 export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
   const siteUrl = new URL(config.siteUrl);
+  const {
+    projectName,
+    tagline,
+    repoUrl,
+    rootDir = '..',
+    docsDir = '../docs',
+    search = false,
+    docsTableOfContents,
+    examplesDir,
+    exampleTableOfContents,
+    webpackConfig = {}
+  } = config;
+  const hasExamples = Boolean(examplesDir && exampleTableOfContents);
 
   return {
-    title: config.projectName,
-    tagline: config.tagline,
+    title: projectName,
+    tagline,
     url: siteUrl.origin,
     baseUrl: siteUrl.pathname,
     onBrokenLinks: 'warn',
     onBrokenMarkdownLinks: 'warn',
     favicon: '/favicon.png',
     organizationName: 'visgl',
-    projectName: config.projectName,
+    projectName,
     trailingSlash: false,
     staticDirectories: ['static', resolve(cwd, '../static')],
 
@@ -79,9 +126,9 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
         'classic',
         {
           docs: {
-            path: config.docsDir ?? '../docs',
-            sidebarItemsGenerator: () => config.docsTableOfContents.map(normalizeSidebarItem),
-            editUrl: `${config.repoUrl}/tree/master/docs`
+            path: docsDir,
+            sidebarItemsGenerator: () => docsTableOfContents.map(normalizeSidebarItem),
+            editUrl: `${repoUrl}/tree/master/docs`
           },
           theme: {
             customCss: [resolve(cwd, '../src/styles.css')]
@@ -95,29 +142,28 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
         '@vis.gl/docusaurus-website/plugin-webpack-config',
         deepmerge(
           {
-            debug: true,
             resolve: {
-              modules: [resolve('node_modules'), resolve('../node_modules')],
-              alias: {}
+              modules: [resolve('node_modules'), resolve(rootDir, 'node_modules')],
+              alias: getAliases(rootDir)
             },
             plugins: [],
             module: {}
           },
-          config.webpackConfig
+          webpackConfig
         )
       ],
-      config.examplesDir && [
+      hasExamples && [
         '@docusaurus/plugin-content-docs',
         {
           id: 'examples',
-          path: config.examplesDir,
+          path: examplesDir,
           routeBasePath: 'examples',
-          sidebarItemsGenerator: () => config.exampleTableOfContents?.map(normalizeSidebarItem),
+          sidebarItemsGenerator: () => exampleTableOfContents?.map(normalizeSidebarItem),
           breadcrumbs: false,
           docItemComponent: resolve(cwd, './components/doc-item-component.js')
         }
       ],
-      config.search === 'local' && [
+      search === 'local' && [
         '@cmfcmf/docusaurus-search-local',
         {
           // Options here
@@ -127,14 +173,14 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
 
     themeConfig: {
       navbar: {
-        title: config.projectName,
+        title: projectName,
         logo: {
           alt: 'vis.gl Logo',
           src: '/visgl-logo-dark.png',
           srcDark: '/visgl-logo-light.png'
         },
         items: [
-          config.examplesDir && {
+          hasExamples && {
             to: '/examples',
             position: 'left',
             label: 'Examples'
@@ -145,7 +191,7 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
             label: 'Docs'
           },
           {
-            href: config.repoUrl,
+            href: repoUrl,
             label: 'GitHub',
             position: 'right'
           }
@@ -177,7 +223,7 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
                 label: 'deck.gl-community',
                 href: 'https://visgl.github.io/deck.gl-community/'
               }
-            ].filter((item) => item.label !== config.projectName)
+            ].filter((item) => item.label !== projectName)
           },
           {
             title: 'More',
@@ -188,14 +234,14 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
               },
               {
                 label: 'GitHub',
-                href: config.repoUrl
+                href: repoUrl
               }
             ]
           }
         ],
         copyright: `Copyright © ${new Date().getFullYear()} OpenJS Foundation`
       },
-      algolia: typeof config.search === 'object' ? config.search : undefined,
+      algolia: typeof search === 'object' ? search : undefined,
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme

@@ -25,6 +25,7 @@
   ],
   "paths": {
     "@vis.gl/dev-tools": ["modules/dev-tools/src"],
-    "@vis.gl/ts-plugins": ["modules/ts-plugins/src"]
+    "@vis.gl/ts-plugins": ["modules/ts-plugins/src"],
+    "@vis.gl/docusaurus-website": ["modules/docusaurus-website/src"]
   }
 }
