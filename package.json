@@ -7,16 +7,15 @@
     "modules/*"
   ],
   "scripts": {
-    "bootstrap": "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn && ocular-bootstrap",
+    "bootstrap": "yarn && ocular-bootstrap && npm run build",
     "build": "ocular-clean && tspc -b modules/dev-tools/tsconfig.json && ocular-build",
-    "clean": "ocular-clean",
     "cover": "ocular-test cover",
     "lint": "ocular-lint",
     "test": "ocular-test node",
-    "publish-beta": "ocular-publish beta",
-    "publish-prod": "ocular-publish prod",
+    "publish-beta": "npm run build && ocular-publish beta",
+    "publish-prod": "npm run build && ocular-publish prod",
     "pre-commit": "yarn lint",
-    "pre-push": "ocular-test fast"
+    "pre-push": "ocular-lint pre-commit && ocular-test node"
   },
   "devDependencies": {
     "@luma.gl/constants": "^9.0.0-beta",
