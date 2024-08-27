@@ -1,0 +1,68 @@
+{
+  "name": "@vis.gl/docusaurus-website",
+  "description": "Docusaurus setup for vis.gl frameworks",
+  "license": "MIT",
+  "version": "1.0.0-alpha.3",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/visgl/dev-tools"
+  },
+  "files": [
+    "src",
+    "dist",
+    "scripts",
+    "static"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    },
+    "./components": {
+      "require": "./dist/components/index.cjs",
+      "import": "./dist/components/index.js"
+    },
+    "./plugin-webpack-config": {
+      "require": "./dist/plugin-webpack-config/index.cjs",
+      "import": "./dist/plugin-webpack-config/index.js"
+    }
+  },
+  "bin": {
+    "ocular-doc-headers": "scripts/doc-headers.js"
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "scripts": {},
+  "dependencies": {
+    "@cmfcmf/docusaurus-search-local": "^1.0.0",
+    "@docusaurus/plugin-client-redirects": "^2.0.0",
+    "@docusaurus/plugin-content-docs": "^2.0.0",
+    "@docusaurus/preset-classic": "^2.0.0",
+    "@mdx-js/react": "^1.6.22",
+    "babel-plugin-styled-components": "^2.0.0",
+    "deepmerge": "^4.2.2",
+    "glob": "^7.1.4",
+    "styled-components": "^5.3.3"
+  },
+  "devDependencies": {
+    "@docusaurus/core": "^2.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "peerDependencies": {
+    "@docusaurus/core": "^2.0.0",
+    "react": "*",
+    "react-dom": "*"
+  },
+  "engines": {
+    "node": ">= 18"
+  }
+}

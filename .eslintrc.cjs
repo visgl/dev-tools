@@ -1,6 +1,7 @@
 const {getESLintConfig} = require('@vis.gl/dev-tools/configuration');
 
 module.exports = getESLintConfig({
+  react: "18.0.0",
   overrides: {
     rules: {
       'import/no-extraneous-dependencies': 0,
