@@ -57,6 +57,9 @@ bumpVersion() {
 }
 
 publishToNPM() {
+  # Try add release to GitHub
+  node $DEV_TOOLS_DIR/dist/github-release.js
+
   local tag=$1
   if [ -d "modules" ]; then
     if [ -z $tag ]; then
