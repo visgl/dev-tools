@@ -10,6 +10,11 @@ usage() {
 
 # beta, prod, version-only-beta, version-only-prod or from-git
 MODE=$1
+DEV_TOOLS_DIR=$(dirname $0)/..
+
+print_red() {
+  echo -e "\033[31m${1}\033[0m"
+}
 
 bumpVersion() {
   local versionType
@@ -20,13 +25,33 @@ bumpVersion() {
   fi
 
   if [ -d "modules" ]; then
-    (set -x; npx lerna version $versionType --force-publish --exact --no-commit-hooks)
+    (set -x; npx lerna version $versionType --force-publish --exact --no-commit-hooks --no-push)
   else
     # -f includes any changes in the version commit
     (set -x; npm version $versionType --force)
-    # push to branch
-    (set -x; git push && git push --tags)
   fi
+
+  newVersion=`git describe`
+  uncommittedChanges=`git status --porcelain`
+  stopPublish=
+  if [ -z "$uncommittedChanges" ]; then
+    # verify changelog
+    grep -e "^##.*\\b${newVersion}\\b" CHANGELOG.md ||
+      (print_red "\nerror: ${newVersion} not found in CHANGELOG\n" && stopPublish=1)
+  else
+    print_red "\nerror: Working tree has uncommitted changes\n"
+    stopPublish=1
+  fi
+
+  # if failed, reset the version bump
+  if [ "$stopPublish" == "1" ]; then
+     git tag -d "${newVersion}"
+     git reset HEAD~ &&
+     exit 1
+  fi
+
+  # push to branch
+  (set -x; git push --no-verify && git push --tags --no-verify)
 }
 
 publishToNPM() {
