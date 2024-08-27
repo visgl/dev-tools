@@ -1,3 +1,7 @@
+## v1.0.0-alpha.11
+
+- feat(dev-tools): create GitHub release during publish
+
 ## v1.0.0-alpha.10
 
 - fix(dev-tools): Changelog verification
