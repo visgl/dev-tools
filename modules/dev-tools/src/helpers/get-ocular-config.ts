@@ -13,8 +13,6 @@ type BrowserTestOptions = Parameters<BrowserTestDriver['run']>[0];
 export type OcularConfig = {
   root?: string;
 
-  esm?: boolean;
-
   aliases?: {[module: string]: string};
 
   nodeAliases?: {[module: string]: string};
