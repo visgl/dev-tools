@@ -1,3 +1,7 @@
+## v1.0.0-alpha.15
+
+- fix(dev-tools): yarn 4 command error
+
 ## v1.0.0-alpha.14
 
 - feat(dev-tools): add logic to generate npm dist tag
