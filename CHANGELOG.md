@@ -1,3 +1,7 @@
+## v1.0.0-alpha.18
+
+- fix(dev-tools): publish script bug
+
 ## v1.0.0-alpha.17
 
 - feat(docusaurus-website): upgrade to docusaurus v3
