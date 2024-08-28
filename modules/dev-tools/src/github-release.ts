@@ -29,7 +29,7 @@ if (!tag) {
 
 /** Description of this release, parsed from CHANGELOG.md */
 const releaseNotes = getReleaseNotes(tag);
-if (releaseNotes == null) {
+if (releaseNotes === null) {
   console.error('CHANGELOG NOT FOUND');
   process.exit(1);
 }

@@ -60,20 +60,11 @@ publishToNPM() {
   # Try add release to GitHub
   node $DEV_TOOLS_DIR/dist/github-release.js
 
-  local tag=$1
+  local tag=`node $DEV_TOOLS_DIR/dist/helpers/get-npm-dist-tag.js`
   if [ -d "modules" ]; then
-    if [ -z $tag ]; then
-      # use default tag ('latest' or publishConfig.tag in package.json)
-      (set -x; npx lerna publish from-package --force-publish --yes --no-commit-hooks)
-    else
-      (set -x; npx lerna publish from-package --force-publish --yes --dist-tag $tag --no-commit-hooks)
-    fi
+    (set -x; npx lerna publish from-package --force-publish --yes --dist-tag $tag --no-commit-hooks)
   else
-    if [ -z $tag ]; then
-      (set -x; npm publish)
-    else
-      (set -x; npm publish --tag $tag)
-    fi
+    (set -x; npm publish --tag $tag)
   fi
 }
 
@@ -92,22 +83,17 @@ case $MODE in
 
   "beta")
     bumpVersion beta
-    publishToNPM ${2:-beta}
+    publishToNPM
     ;;
 
   "prod")
     bumpVersion prod
-    publishToNPM $2
+    publishToNPM
     ;;
 
   "from-git")
     # publish from existing tag
-    gitTag=$(git describe --tags)
-    if [[ $gitTag == *"-"* ]]; then
-      publishToNPM ${2:-beta}
-    else
-      publishToNPM $2
-    fi
+    publishToNPM
     ;;
 
   *)
