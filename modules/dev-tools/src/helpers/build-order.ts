@@ -15,7 +15,8 @@ for (const item of fs.readdirSync('./modules')) {
 
     modules.push(itemPath);
 
-    const tsconfig = JSON.parse(fs.readFileSync(tsconfigFile, 'utf8'));
+    const tsconfigContent = fs.readFileSync(tsconfigFile, 'utf8').replace(/\/\/.*/gm, '');
+    const tsconfig = JSON.parse(tsconfigContent);
     dependencies[itemPath] = {
       order: -1,
       deps: ((tsconfig.references || []) as {path: string}[]).map((d) =>
