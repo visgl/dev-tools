@@ -1,12 +1,13 @@
 import fs from 'fs';
 import {resolve, dirname} from 'path';
-import lightCodeTheme from 'prism-react-renderer/themes/nightOwlLight';
-import darkCodeTheme from 'prism-react-renderer/themes/nightOwl';
 import deepmerge from 'deepmerge';
 import type {Config} from '@docusaurus/types';
 import type {Options as ClassicThemeOptions, ThemeConfig} from '@docusaurus/preset-classic';
+import {themes} from 'prism-react-renderer';
 
 const cwd = dirname(typeof require === 'undefined' ? import.meta.url : __filename);
+const lightCodeTheme = themes.nightOwlLight;
+const darkCodeTheme = themes.nightOwl;
 
 type SidebarItem = {
   type: 'category' | 'doc';
@@ -90,6 +91,9 @@ export type OcularWebsiteConfig = {
 
   /** Search settings */
   search?: false | 'local' | ThemeConfig['algolia'];
+
+  /** Additional CSS files to include */
+  customCss?: string[];
 };
 
 export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
@@ -104,7 +108,8 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
     docsTableOfContents,
     examplesDir,
     exampleTableOfContents,
-    webpackConfig = {}
+    webpackConfig = {},
+    customCss = []
   } = config;
   const hasExamples = Boolean(examplesDir && exampleTableOfContents);
 
@@ -131,7 +136,7 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
             editUrl: `${repoUrl}/tree/master/docs`
           },
           theme: {
-            customCss: [resolve(cwd, '../src/styles.css')]
+            customCss: [resolve(cwd, '../src/styles.css'), ...customCss]
           }
         } as ClassicThemeOptions
       ]
