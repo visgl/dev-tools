@@ -1,3 +1,7 @@
+## v1.0.0-alpha.16
+
+- fix(dev-tools): Build uses target from tsconfig
+
 ## v1.0.0-alpha.15
 
 - fix(dev-tools): yarn 4 command error
