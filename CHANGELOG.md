@@ -1,3 +1,8 @@
+## v1.0.0-alpha.17
+
+- feat(docusaurus-website): upgrade to docusaurus v3
+- fix(dev-tools): support comments in tsconfig.json
+
 ## v1.0.0-alpha.16
 
 - fix(dev-tools): Build uses target from tsconfig
