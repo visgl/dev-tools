@@ -32,6 +32,9 @@ const DEFAULT_CONFIG = {
     'func-names': 'off',
     'no-inline-comments': 'off',
     'no-multi-str': 'off',
+    // Rules disabled because they conflict with our preferred style
+    // We use function hoisting to put exports at top of file
+    'no-use-before-define': 'off',
     camelcase: 'warn',
     // Let prettier handle this
     indent: 'off',
@@ -62,6 +65,10 @@ const DEFAULT_CONFIG = {
       rules: {
         '@typescript-eslint/no-dupe-class-members': 'error',
         '@typescript-eslint/switch-exhaustiveness-check': 'error',
+
+        // This rule is incompatible with TypeScript, replace with the TS counterpart
+        'no-shadow': 'off',
+        '@typescript-eslint/no-shadow': 'error',
 
         // Rules disabled because they conflict with our preferred style
         // We use function hoisting to put exports at top of file

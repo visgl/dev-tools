@@ -21,7 +21,7 @@ run_test_script() {
 }
 
 run_test_script_pretty() {
-  run_test_script $1 | tap-spec
+  run_test_script $1 | npx tap-spec
 }
 
 generate_coverage_report() {
