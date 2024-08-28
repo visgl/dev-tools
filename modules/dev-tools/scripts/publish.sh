@@ -33,7 +33,7 @@ bumpVersion() {
 
   newVersion=`git describe`
   uncommittedChanges=`git status --porcelain`
-  stopPublish=
+  stopPublish=0
   if [ -z "$uncommittedChanges" ]; then
     # verify changelog
     if ! grep -q -e "^##.*\\b${newVersion}\\b" CHANGELOG.md; then
