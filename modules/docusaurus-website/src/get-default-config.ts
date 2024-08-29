@@ -1,7 +1,8 @@
 import fs from 'fs';
 import {resolve, dirname} from 'path';
 import deepmerge from 'deepmerge';
-import type {Config} from '@docusaurus/types';
+import type {Config, PluginConfig} from '@docusaurus/types';
+import type {NavbarItem} from '@docusaurus/theme-common';
 import type {Options as ClassicThemeOptions, ThemeConfig} from '@docusaurus/preset-classic';
 import {themes} from 'prism-react-renderer';
 
@@ -94,6 +95,12 @@ export type OcularWebsiteConfig = {
 
   /** Additional CSS files to include */
   customCss?: string[];
+
+  /** Additional navbar items */
+  navbarItems?: NavbarItem[];
+
+  /** Additional plugins */
+  plugins?: PluginConfig[];
 };
 
 export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
@@ -109,7 +116,9 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
     examplesDir,
     exampleTableOfContents,
     webpackConfig = {},
-    customCss = []
+    customCss = [],
+    navbarItems = [],
+    plugins = []
   } = config;
   const hasExamples = Boolean(examplesDir && exampleTableOfContents);
 
@@ -173,7 +182,8 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
         {
           // Options here
         }
-      ]
+      ],
+      ...plugins
     ].filter(Boolean),
 
     themeConfig: {
@@ -199,7 +209,8 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
             href: repoUrl,
             label: 'GitHub',
             position: 'right'
-          }
+          },
+          ...navbarItems
         ].filter(Boolean)
       },
       footer: {
