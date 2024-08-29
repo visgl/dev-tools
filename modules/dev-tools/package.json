@@ -2,7 +2,7 @@
   "name": "@vis.gl/dev-tools",
   "description": "Dev tools for vis.gl frameworks",
   "license": "MIT",
-  "version": "1.0.0-alpha.18",
+  "version": "1.0.0-alpha.19",
   "type": "module",
   "publishConfig": {
     "access": "public"

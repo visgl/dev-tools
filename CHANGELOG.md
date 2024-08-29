@@ -1,3 +1,7 @@
+## v1.0.0-alpha.19
+
+- feat(docusaurus-website): add navbarItems and plugins options
+
 ## v1.0.0-alpha.18
 
 - fix(dev-tools): publish script bug
