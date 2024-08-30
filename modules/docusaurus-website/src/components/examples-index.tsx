@@ -1,12 +1,11 @@
 import React from 'react';
-// Note: this is internal API and may change in a future release
-// https://github.com/facebook/docusaurus/discussions/7457
+// @ts-ignore Internal API
 import {useDocsSidebar} from '@docusaurus/plugin-content-docs/client';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styled from 'styled-components';
 import {isMobile} from './common.js';
 
-export const ExampleHeader = styled.div`
+const ExampleHeader = styled.div`
   font: bold 20px/28px var(--ifm-font-family-base);
   color: var(--ifm-color-gray-800);
   margin: 0 20px;
@@ -15,17 +14,17 @@ export const ExampleHeader = styled.div`
   padding: 20px 20px 4px 0;
 `;
 
-export const MainExamples = styled.main`
+const MainExamples = styled.main`
   padding: 16px 0;
 `;
 
-export const ExamplesGroup = styled.main`
+const ExamplesGroup = styled.main`
   display: flex;
   flex-wrap: wrap;
   padding: 16px;
 `;
 
-export const ExampleCard = styled.a`
+const ExampleCard = styled.a`
   cursor: pointer;
   text-decoration: none;
   width: 50%;
@@ -54,7 +53,7 @@ export const ExampleCard = styled.a`
   }
 `;
 
-export const ExampleTitle = styled.div`
+const ExampleTitle = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -77,7 +76,23 @@ export const ExampleTitle = styled.div`
   }
 `;
 
-function renderItem(item, getThumbnail) {
+type SidebarCategoryItem = {
+  type: 'category';
+  label?: string;
+  items: SidebarItem[];
+};
+type SidebarLinkItem = {
+  type: 'link';
+  docId?: string;
+  label?: string;
+  href: string;
+};
+type SidebarItem = SidebarCategoryItem | SidebarLinkItem;
+
+/** Returns a image URL for an item */
+type GetThumbnailCallback = (item: SidebarItem) => string;
+
+function renderItem(item: SidebarLinkItem, getThumbnail: GetThumbnailCallback) {
   const imageUrl = useBaseUrl(getThumbnail(item));
   const {label, href} = item;
 
@@ -91,23 +106,30 @@ function renderItem(item, getThumbnail) {
   );
 }
 
-function renderCategory({label, items}, getThumbnail) {
-  return [
-    <ExampleHeader key={`${label}-header`}>{label}</ExampleHeader>,
-    <ExamplesGroup key={label}>{items.map((item) => renderItem(item, getThumbnail))}</ExamplesGroup>
-  ];
-}
-
-export default function ExamplesIndex({getThumbnail}) {
-  const sidebar = useDocsSidebar();
-
-  const pages = sidebar.items.filter((item) => item.type !== 'category' && item.docId !== 'index');
-  const categories = sidebar.items.filter((item) => item.type === 'category');
+function renderCategory({label, items}: SidebarCategoryItem, getThumbnail: GetThumbnailCallback) {
+  const pages: SidebarLinkItem[] = [];
+  const categories: SidebarCategoryItem[] = [];
+  for (const item of items) {
+    if (item.type === 'category') {
+      categories.push(item);
+    } else if (item.docId !== 'index') {
+      pages.push(item);
+    }
+  }
 
   return (
-    <MainExamples>
-      <ExamplesGroup>{pages.map((item) => renderItem(item, getThumbnail))}</ExamplesGroup>
+    <>
+      {label && <ExampleHeader>{label}</ExampleHeader>}
+      {pages.length > 0 && (
+        <ExamplesGroup>{pages.map((item) => renderItem(item, getThumbnail))}</ExamplesGroup>
+      )}
       {categories.map((item) => renderCategory(item, getThumbnail))}
-    </MainExamples>
+    </>
   );
+}
+
+export function ExamplesIndex({getThumbnail}: {getThumbnail: GetThumbnailCallback}) {
+  const sidebar = useDocsSidebar() as unknown as SidebarCategoryItem;
+
+  return <MainExamples>{renderCategory(sidebar, getThumbnail)}</MainExamples>;
 }

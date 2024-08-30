@@ -10,15 +10,18 @@ const cwd = dirname(typeof require === 'undefined' ? import.meta.url : __filenam
 const lightCodeTheme = themes.nightOwlLight;
 const darkCodeTheme = themes.nightOwl;
 
-type SidebarItem = {
-  type: 'category' | 'doc';
-  id?: string;
-  label?: string;
-  items?: (string | SidebarItem)[];
-};
+type SidebarItem =
+  | string
+  | {
+      type: 'category' | 'doc' | 'link';
+      id?: string;
+      to?: string;
+      label?: string;
+      items?: SidebarItem[];
+    };
 
 /** Convert string style item to object style */
-function normalizeSidebarItem(item: SidebarItem | string): SidebarItem {
+function normalizeSidebarItem(item: SidebarItem): SidebarItem {
   if (typeof item === 'string') {
     return {
       type: 'doc',

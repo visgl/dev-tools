@@ -1,4 +1,4 @@
-export {default as ExamplesIndex} from './examples-index.js';
-export {default as Home} from './home.js';
-export {default as Spinner} from './spinner.js';
-export {default as InfoPanel} from './info-panel.js';
+export {ExamplesIndex} from './examples-index.js';
+export {Home} from './home.js';
+export {Spinner} from './spinner.js';
+export {InfoPanel} from './info-panel.js';

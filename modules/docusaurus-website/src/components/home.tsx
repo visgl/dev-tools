@@ -3,7 +3,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styled from 'styled-components';
 import {isMobile} from './common.js';
 
-export const Banner = styled.section`
+const Banner = styled.section`
   position: relative;
   height: 30rem;
   background: var(--ifm-color-gray-400);
@@ -14,7 +14,7 @@ export const Banner = styled.section`
   }
 `;
 
-export const Container = styled.div`
+const Container = styled.div`
   position: relative;
   padding: 2rem;
   max-width: 80rem;
@@ -23,7 +23,7 @@ export const Container = styled.div`
   margin: 0;
 `;
 
-export const BannerContainer = styled(Container)`
+const BannerContainer = styled(Container)`
   position: absolute;
   bottom: 0;
   height: auto;
@@ -32,7 +32,7 @@ export const BannerContainer = styled(Container)`
   pointer-events: none;
 `;
 
-export const HeroExampleContainer = styled.div`
+const HeroExampleContainer = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -41,13 +41,13 @@ export const HeroExampleContainer = styled.div`
   z-index: -1;
 `;
 
-export const Section = styled.section`
-  &:nth-child(2n + 1) {
-    background: var(--ifm-color-gray-300);
-  }
-`;
+// const Section = styled.section`
+//   &:nth-child(2n + 1) {
+//     background: var(--ifm-color-gray-300);
+//   }
+// `;
 
-export const ProjectName = styled.h1`
+const ProjectName = styled.h1`
   font-size: 5em;
   line-height: 1;
   text-transform: uppercase;
@@ -57,7 +57,7 @@ export const ProjectName = styled.h1`
   margin-bottom: 16px;
 `;
 
-export const GetStartedLink = styled.a`
+const GetStartedLink = styled.a`
   pointer-events: all;
   font-size: 12px;
   line-height: 44px;
@@ -91,21 +91,29 @@ export const GetStartedLink = styled.a`
   }
 `;
 
-export default function renderPage({HeroExample, children}) {
+export function Home({
+  HeroExample,
+  getStartedLink = './docs'
+}: {
+  /** Component to render in the banner background */
+  HeroExample?: () => React.ReactElement;
+
+  /** Target URL of the "get started" button. If null, will hide the button.
+   * @default './docs'
+   */
+  getStartedLink?: string | null;
+}) {
   const {siteConfig} = useDocusaurusContext();
 
   // Note: The Layout "wrapper" component adds header and footer etc
   return (
-    <>
-      <Banner>
-        <HeroExampleContainer>{HeroExample && <HeroExample />}</HeroExampleContainer>
-        <BannerContainer>
-          <ProjectName>{siteConfig.title}</ProjectName>
-          <p>{siteConfig.tagline}</p>
-          <GetStartedLink href="./docs/developer-guide/get-started">GET STARTED</GetStartedLink>
-        </BannerContainer>
-      </Banner>
-      {children}
-    </>
+    <Banner>
+      <HeroExampleContainer>{HeroExample && <HeroExample />}</HeroExampleContainer>
+      <BannerContainer>
+        <ProjectName>{siteConfig.title}</ProjectName>
+        <p>{siteConfig.tagline}</p>
+        {getStartedLink && <GetStartedLink href={getStartedLink}>GET STARTED</GetStartedLink>}
+      </BannerContainer>
+    </Banner>
   );
 }

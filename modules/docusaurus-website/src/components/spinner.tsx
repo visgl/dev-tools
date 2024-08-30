@@ -37,12 +37,12 @@ const SpinnerContainer = styled.div`
   }
 `;
 
-export default function Spinner({meta}) {
-  if (!Number.isFinite(meta.progress) && !Number.isFinite(meta.progressAlt)) {
+export function Spinner(props: {progress?: number; progressAlt?: number}) {
+  if (!Number.isFinite(props.progress) && !Number.isFinite(props.progressAlt)) {
     return null;
   }
 
-  const progress = (meta.progress || 0) + (meta.progressAlt || 0);
+  const progress = (props.progress || 0) + (props.progressAlt || 0);
   const percentage = Math.round(progress * 1000) / 10;
   const text = `Loading... ${percentage}%`;
 

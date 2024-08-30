@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
-import GenericInput from './input.js';
-import Spinner from './spinner.js';
+import {Input} from './input.js';
+import {Spinner} from './spinner.js';
 import {isMobile} from './common.js';
 
-export const PanelContainer = styled.div`
+const PanelContainer = styled.div`
   font-size: 14px;
   position: absolute;
   top: 0;
@@ -27,7 +27,7 @@ export const PanelContainer = styled.div`
   }
 `;
 
-export const PanelExpander = styled.div`
+const PanelExpander = styled.div`
   display: none;
   width: 16px;
   height: 16px;
@@ -43,7 +43,7 @@ export const PanelExpander = styled.div`
   }
 `;
 
-export const PanelTitle = styled.div`
+const PanelTitle = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,7 +54,7 @@ export const PanelTitle = styled.div`
   }
 `;
 
-export const PanelContent = styled.div`
+const PanelContent = styled.div`
   div > * {
     vertical-align: middle;
     white-space: nowrap;
@@ -109,7 +109,7 @@ export const PanelContent = styled.div`
   }
 `;
 
-export const SourceLink = styled.a`
+const SourceLink = styled.a`
   display: block;
   text-align: right;
   margin-top: 8px;
@@ -175,7 +175,15 @@ const InfoPanelContent = styled.div`
   }
 `;
 
-function InfoPanel({title, children, sourceLink}) {
+function InfoPanelWrapper({
+  title,
+  children,
+  sourceLink
+}: {
+  title: string;
+  children: any;
+  sourceLink: string;
+}) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -192,9 +200,23 @@ function InfoPanel({title, children, sourceLink}) {
   );
 }
 
-export default function ExampleInfoPanel({title, sourceLink, params, meta, children, updateParam}) {
+export function InfoPanel({
+  title,
+  sourceLink,
+  params,
+  meta,
+  children,
+  updateParam
+}: {
+  title: string;
+  sourceLink: string;
+  params: any;
+  meta: any;
+  children: any;
+  updateParam: () => void;
+}) {
   return (
-    <InfoPanel title={title} sourceLink={sourceLink}>
+    <InfoPanelWrapper title={title} sourceLink={sourceLink}>
       <InfoPanelContent>
         {children}
 
@@ -203,16 +225,11 @@ export default function ExampleInfoPanel({title, sourceLink, params, meta, child
         {Object.keys(params)
           .sort()
           .map((name, i) => (
-            <GenericInput
-              key={`${i}-${name}`}
-              name={name}
-              {...params[name]}
-              onChange={updateParam}
-            />
+            <Input key={`${i}-${name}`} name={name} {...params[name]} onChange={updateParam} />
           ))}
       </InfoPanelContent>
 
-      <Spinner meta={meta} />
-    </InfoPanel>
+      <Spinner {...meta} />
+    </InfoPanelWrapper>
   );
 }
