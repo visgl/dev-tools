@@ -7,7 +7,8 @@ const Banner = styled.section`
   position: relative;
   height: 30rem;
   background: var(--ifm-color-gray-400);
-  color: var(--ifm-color-gray-900);
+  color: ${(props) =>
+    props.theme === 'light' ? 'var(--ifm-color-gray-900)' : 'var(--ifm-color-gray-200)'};
   z-index: 0;
   ${isMobile} {
     height: 80vh;
@@ -65,14 +66,13 @@ const GetStartedLink = styled.a`
   font-weight: bold;
   margin: 24px 0;
   padding: 0 4rem;
-  pointer-events: all;
   display: inline-block;
   text-decoration: none;
   transition:
     background-color 250ms ease-in,
     color 250ms ease-in;
   border: solid 2px var(--ifm-color-primary);
-  color: var(--ifm-color-gray-900);
+  color: inherit;
   border-image: linear-gradient(
     to right,
     var(--ifm-color-gray-700) 0%,
@@ -80,7 +80,7 @@ const GetStartedLink = styled.a`
   );
   border-image-slice: 2;
   &:visited {
-    color: var(--ifm-color-gray-900);
+    color: inherit;
   }
   &:active {
     color: var(--ifm-color-white);
@@ -93,7 +93,8 @@ const GetStartedLink = styled.a`
 
 export function Home({
   HeroExample,
-  getStartedLink = './docs'
+  getStartedLink = './docs',
+  theme = 'light'
 }: {
   /** Component to render in the banner background */
   HeroExample?: () => React.ReactElement;
@@ -102,12 +103,17 @@ export function Home({
    * @default './docs'
    */
   getStartedLink?: string | null;
+
+  /** Color theme
+   * @default 'light'
+   */
+  theme?: 'light' | 'dark';
 }) {
   const {siteConfig} = useDocusaurusContext();
 
   // Note: The Layout "wrapper" component adds header and footer etc
   return (
-    <Banner>
+    <Banner theme={theme}>
       <HeroExampleContainer>{HeroExample && <HeroExample />}</HeroExampleContainer>
       <BannerContainer>
         <ProjectName>{siteConfig.title}</ProjectName>
