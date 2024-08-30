@@ -1,3 +1,7 @@
+## v1.0.0-alpha.21
+
+- feat(docusaurus-website): add theme prop to Home component
+
 ## v1.0.0-alpha.20
 
 - feat(docusaurus-website): typed React components
