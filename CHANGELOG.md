@@ -1,3 +1,7 @@
+## v1.0.0-alpha.20
+
+- feat(docusaurus-website): typed React components
+
 ## v1.0.0-alpha.19
 
 - feat(docusaurus-website): add navbarItems and plugins options
