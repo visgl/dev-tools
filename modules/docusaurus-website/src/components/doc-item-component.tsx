@@ -10,7 +10,8 @@ const DemoContainer = styled.div`
   top: 0;
   bottom: 0;
 
-  > h1 {
+  > h1,
+  > header {
     display: none;
   }
 `;

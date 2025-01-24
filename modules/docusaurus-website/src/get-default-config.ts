@@ -157,17 +157,17 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
     plugins: [
       [
         '@vis.gl/docusaurus-website/plugin-webpack-config',
-        deepmerge(
-          {
-            resolve: {
+        {
+          ...webpackConfig,
+          resolve: deepmerge(
+            {
               modules: [resolve('node_modules'), resolve(rootDir, 'node_modules')],
               alias: getAliases(rootDir)
             },
-            plugins: [],
-            module: {}
-          },
-          webpackConfig
-        )
+            // @ts-ignore undefined property
+            webpackConfig.resolve
+          )
+        }
       ],
       hasExamples && [
         '@docusaurus/plugin-content-docs',
