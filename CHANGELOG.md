@@ -1,3 +1,7 @@
+## v1.0.0-alpha.22
+
+- fix(docusaurus-website): fix error when using custom Webpack plugins
+
 ## v1.0.0-alpha.21
 
 - feat(docusaurus-website): add theme prop to Home component
