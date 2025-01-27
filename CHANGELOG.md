@@ -1,3 +1,7 @@
+## v1.0.0-alpha.23
+
+- feat(docusaurus-website): Allow theme override
+
 ## v1.0.0-alpha.22
 
 - fix(docusaurus-website): fix error when using custom Webpack plugins
