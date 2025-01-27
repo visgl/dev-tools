@@ -96,6 +96,9 @@ export type OcularWebsiteConfig = {
   /** Search settings */
   search?: false | 'local' | ThemeConfig['algolia'];
 
+  /** Custom overrides of the theme */
+  themeConfig?: ThemeConfig;
+
   /** Additional CSS files to include */
   customCss?: string[];
 
@@ -119,6 +122,7 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
     examplesDir,
     exampleTableOfContents,
     webpackConfig = {},
+    themeConfig = {},
     customCss = [],
     navbarItems = [],
     plugins = []
@@ -189,82 +193,85 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
       ...plugins
     ].filter(Boolean),
 
-    themeConfig: {
-      navbar: {
-        title: projectName,
-        logo: {
-          alt: 'vis.gl Logo',
-          src: '/visgl-logo-dark.png',
-          srcDark: '/visgl-logo-light.png'
+    themeConfig: deepmerge(
+      {
+        navbar: {
+          title: projectName,
+          logo: {
+            alt: 'vis.gl Logo',
+            src: '/visgl-logo-dark.png',
+            srcDark: '/visgl-logo-light.png'
+          },
+          items: [
+            hasExamples && {
+              to: '/examples',
+              position: 'left',
+              label: 'Examples'
+            },
+            {
+              to: '/docs',
+              position: 'left',
+              label: 'Docs'
+            },
+            {
+              href: repoUrl,
+              label: 'GitHub',
+              position: 'right'
+            },
+            ...navbarItems
+          ].filter(Boolean)
         },
-        items: [
-          hasExamples && {
-            to: '/examples',
-            position: 'left',
-            label: 'Examples'
-          },
-          {
-            to: '/docs',
-            position: 'left',
-            label: 'Docs'
-          },
-          {
-            href: repoUrl,
-            label: 'GitHub',
-            position: 'right'
-          },
-          ...navbarItems
-        ].filter(Boolean)
+        footer: {
+          style: 'dark',
+          links: [
+            {
+              title: 'Other vis.gl Libraries',
+              items: [
+                {
+                  label: 'deck.gl',
+                  href: 'https:/deck.gl'
+                },
+                {
+                  label: 'luma.gl',
+                  href: 'https://luma.gl'
+                },
+                {
+                  label: 'loaders.gl',
+                  href: 'https://loaders.gl'
+                },
+                {
+                  label: 'react-map-gl',
+                  href: 'https://visgl.github.io/react-map-gl'
+                },
+                {
+                  label: 'deck.gl-community',
+                  href: 'https://visgl.github.io/deck.gl-community/'
+                }
+              ].filter((item) => item.label !== projectName)
+            },
+            {
+              title: 'More',
+              items: [
+                {
+                  label: 'vis.gl blog on Medium',
+                  href: 'https://medium.com/vis-gl'
+                },
+                {
+                  label: 'GitHub',
+                  href: repoUrl
+                }
+              ]
+            }
+          ],
+          copyright: `Copyright © ${new Date().getFullYear()} OpenJS Foundation`
+        },
+        algolia: typeof search === 'object' ? search : undefined,
+        prism: {
+          theme: lightCodeTheme,
+          darkTheme: darkCodeTheme
+        }
       },
-      footer: {
-        style: 'dark',
-        links: [
-          {
-            title: 'Other vis.gl Libraries',
-            items: [
-              {
-                label: 'deck.gl',
-                href: 'https:/deck.gl'
-              },
-              {
-                label: 'luma.gl',
-                href: 'https://luma.gl'
-              },
-              {
-                label: 'loaders.gl',
-                href: 'https://loaders.gl'
-              },
-              {
-                label: 'react-map-gl',
-                href: 'https://visgl.github.io/react-map-gl'
-              },
-              {
-                label: 'deck.gl-community',
-                href: 'https://visgl.github.io/deck.gl-community/'
-              }
-            ].filter((item) => item.label !== projectName)
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'vis.gl blog on Medium',
-                href: 'https://medium.com/vis-gl'
-              },
-              {
-                label: 'GitHub',
-                href: repoUrl
-              }
-            ]
-          }
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} OpenJS Foundation`
-      },
-      algolia: typeof search === 'object' ? search : undefined,
-      prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme
-      }
-    } as ThemeConfig
+      themeConfig
+    ) as ThemeConfig
   } as Config;
 }
