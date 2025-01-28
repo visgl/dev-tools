@@ -56,6 +56,7 @@ const ProjectName = styled.h1`
   font-weight: 700;
   margin: 0;
   margin-bottom: 16px;
+  word-wrap: normal;
 `;
 
 const GetStartedLink = styled.a`
