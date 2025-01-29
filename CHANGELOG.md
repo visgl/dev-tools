@@ -1,3 +1,7 @@
+## v1.0.0
+
+Initial production release
+
 ## v1.0.0-alpha.23
 
 - feat(docusaurus-website): Allow theme override
