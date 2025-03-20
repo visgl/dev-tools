@@ -65,7 +65,7 @@ case $MODE in
 
   "ci")
     # run by CI
-    if [ "$COVERAGE_TEST" == "browser" ]; then
+    if [ "$COVERAGE_TEST" == "node" ]; then
       run_test_script_pretty node
     else
       run_test_script_pretty browser-headless
