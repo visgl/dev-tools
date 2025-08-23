@@ -218,6 +218,11 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
               label: 'GitHub',
               position: 'right'
             },
+            {
+              type: 'html',
+              position: 'right',
+              value: '<a href="https://openvisualization.org" target="_blank" style="content: \'\'; height: 28px; width: 100px; background-image: url(\'/openjs-foundation.svg\'); background-repeat: no-repeat;  background-size: 100px 28px; display: flex">'
+            },
             ...navbarItems
           ].filter(Boolean)
         },
@@ -252,6 +257,10 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
             {
               title: 'More',
               items: [
+                {
+                  label: 'Slack workspace',
+                  href: 'https://slack-invite.openjsf.org'
+                },
                 {
                   label: 'vis.gl blog on Medium',
                   href: 'https://medium.com/vis-gl'
