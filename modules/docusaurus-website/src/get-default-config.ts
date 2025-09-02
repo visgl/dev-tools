@@ -222,7 +222,7 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
               type: 'html',
               position: 'right',
               value:
-                '<a href="https://openvisualization.org" target="_blank" style="content: \'\'; height: 28px; width: 100px; background-image: url(\'/openjs-foundation.svg\'); background-repeat: no-repeat;  background-size: 100px 28px; display: flex">'
+                '<a href="https://openvisualization.org" target="_blank" style="content: \'\'; height: 24px; width: 80px; background-image: url(\'/openjs-foundation.svg\'); background-repeat: no-repeat;  background-size: 80px 24px; display: flex"></a>'
             },
             ...navbarItems
           ].filter(Boolean)
