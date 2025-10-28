@@ -39,18 +39,14 @@ export default function (
     extMappings.set(base, addition);
   }
 
-  function shouldMutateModuleSpecifier(node: Node): string | false {
-    if (!ts.isImportDeclaration(node) && !ts.isExportDeclaration(node)) return false;
-    if (node.moduleSpecifier === undefined) return false;
-    // only when module specifier is valid
-    if (!ts.isStringLiteral(node.moduleSpecifier)) return false;
+  function shouldMutateImportSource(node: Node | undefined): string | false {
+    if (!node || !ts.isStringLiteral(node)) return false;
     // only when path is relative
-    if (!node.moduleSpecifier.text.startsWith('./') && !node.moduleSpecifier.text.startsWith('../'))
-      return false;
+    if (!node.text.startsWith('./') && !node.text.startsWith('../')) return false;
     // only when module specifier has accepted extension
-    const ext = path.extname(node.moduleSpecifier.text);
+    const ext = path.extname(node.text);
     if (!extMappings.has(ext)) return false;
-    return node.moduleSpecifier.text + extMappings.get(ext);
+    return node.text + extMappings.get(ext);
   }
 
   return (ctx: TransformationContext) => {
@@ -58,9 +54,9 @@ export default function (
 
     return (sourceFile: SourceFile) => {
       function visit(node: Node): Node {
-        const newImportSource = shouldMutateModuleSpecifier(node);
-        if (newImportSource) {
-          if (ts.isImportDeclaration(node)) {
+        if (ts.isImportDeclaration(node)) {
+          const newImportSource = shouldMutateImportSource(node.moduleSpecifier);
+          if (newImportSource) {
             const newModuleSpecifier = factory.createStringLiteral(newImportSource);
             node = factory.updateImportDeclaration(
               node,
@@ -69,7 +65,10 @@ export default function (
               newModuleSpecifier,
               node.assertClause
             );
-          } else if (ts.isExportDeclaration(node)) {
+          }
+        } else if (ts.isExportDeclaration(node)) {
+          const newImportSource = shouldMutateImportSource(node.moduleSpecifier);
+          if (newImportSource) {
             const newModuleSpecifier = factory.createStringLiteral(newImportSource);
             node = factory.updateExportDeclaration(
               node,
@@ -79,6 +78,16 @@ export default function (
               newModuleSpecifier,
               node.assertClause
             );
+          }
+        } else if (
+          ts.isCallExpression(node) &&
+          node.expression.kind === ts.SyntaxKind.ImportKeyword
+        ) {
+          const newImportSource = shouldMutateImportSource(node.arguments[0]);
+          if (newImportSource) {
+            const newArgs = node.arguments.slice();
+            newArgs[0] = factory.createStringLiteral(newImportSource);
+            node = factory.updateCallExpression(node, node.expression, node.typeArguments, newArgs);
           }
         }
 

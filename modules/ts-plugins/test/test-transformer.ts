@@ -68,7 +68,7 @@ export function assertSourceEqual(
      */
     ignoreEmptyLines?: boolean;
   } = {}
-): true | Error {
+): true | string {
   const {ignoreIndent = true, ignoreEmptyLines = true} = options;
   const actualLines = actual.split('\n');
   const expectedLines = expected.split('\n');
@@ -90,10 +90,9 @@ export function assertSourceEqual(
     } else if (ignoreEmptyLines && !t2) {
       i2++;
     } else {
-      return new Error(`Mismatch at line ${i1}
+      return `Mismatch at line ${i1}
     Actual: ${t1}
-  Expected: ${t2}
-      `);
+    Expected: ${t2}`;
     }
   }
   return true;
