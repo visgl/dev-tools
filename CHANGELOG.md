@@ -1,3 +1,7 @@
+## v1.0.1
+
+- [ts-plugins] append extension to dynamic imports (#14)
+
 ## v1.0.0
 
 Initial production release
