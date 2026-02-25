@@ -1,3 +1,7 @@
+## v1.0.2
+
+- fix(dev-tools): default cjs output path
+
 ## v1.0.1
 
 - [ts-plugins] append extension to dynamic imports (#14)
