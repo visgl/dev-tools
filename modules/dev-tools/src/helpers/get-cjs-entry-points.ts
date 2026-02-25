@@ -37,5 +37,5 @@ export function getCJSEntryPoints(): {
   }
 
   // Default entry
-  return [{inputFile: './dist/index.js', outputFile: './dist.index.cjs'}];
+  return [{inputFile: './dist/index.js', outputFile: './dist/index.cjs'}];
 }
