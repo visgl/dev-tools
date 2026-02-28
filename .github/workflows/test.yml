@@ -12,17 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [20]
 
     steps:
-      - uses: actions/checkout@v2.1.1
-
-      - uses: c-hive/gha-yarn-cache@v1
+      - uses: actions/checkout@v4
 
       - name: Set up Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
 
       - name: Bootstrap
         run: |
@@ -34,8 +33,8 @@ jobs:
           npm run cover
 
       - name: Coveralls
-        if: matrix.node-version == 18
-        uses: coverallsapp/github-action@master
+        if: matrix.node-version == 20
+        uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ${{ github.workspace }}/coverage/lcov.info
