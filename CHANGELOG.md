@@ -1,3 +1,7 @@
+## v1.0.3
+
+-  feat(ts-plugins): Add webgpu transform (#40)
+
 ## v1.0.2
 
 - fix(dev-tools): default cjs output path
