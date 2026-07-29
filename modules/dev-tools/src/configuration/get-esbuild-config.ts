@@ -81,6 +81,7 @@ export async function getCJSExportConfig(opts: {
     target: 'node16',
     packages: 'external',
     sourcemap: true,
+    sourcesContent: false,
     logLevel: 'info'
   };
 }

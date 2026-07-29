@@ -39,6 +39,10 @@
     "./ts-transform-inline-webgl-constants": {
       "require": "./dist/ts-transform-inline-webgl-constants/index.cjs",
       "import": "./dist/ts-transform-inline-webgl-constants/index.js"
+    },
+    "./ts-transform-webgpu": {
+      "require": "./dist/ts-transform-webgpu/index.cjs",
+      "import": "./dist/ts-transform-webgpu/index.js"
     }
   },
   "types": "./dist/index.d.ts",
