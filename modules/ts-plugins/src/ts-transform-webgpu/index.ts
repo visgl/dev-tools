@@ -1,7 +1,6 @@
 /**
  * TypeScript transform that controls whether WebGPU-only code is emitted.
  */
-/* eslint-disable complexity, max-depth */
 import type {
   Expression,
   Identifier,

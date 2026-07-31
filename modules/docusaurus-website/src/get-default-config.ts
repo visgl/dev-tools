@@ -168,7 +168,7 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
               modules: [resolve('node_modules'), resolve(rootDir, 'node_modules')],
               alias: getAliases(rootDir)
             },
-            // @ts-ignore undefined property
+            // @ts-expect-error undefined property
             webpackConfig.resolve
           )
         }

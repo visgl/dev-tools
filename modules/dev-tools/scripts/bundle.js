@@ -28,7 +28,7 @@ async function run() {
   if (env.watch) {
     buildConfig.watch = true;
     await esbuild.build(buildConfig);
-    /* eslint-disable no-console */
+    // biome-ignore lint/suspicious/noConsole: Verbose mode intentionally prints bundle diagnostics.
     console.log('watching...');
   } else {
     const result = await esbuild.build(buildConfig);

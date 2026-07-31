@@ -106,14 +106,11 @@ export type MaterializedOcularConfig = {
 };
 
 export async function getOcularConfig(
-  options: {
-    root?: string;
-    aliasMode?: 'src' | 'dist';
-  } = {}
+  options: {root?: string; aliasMode?: 'src' | 'dist'} = {}
 ): Promise<MaterializedOcularConfig> {
   const packageRoot = options.root || process.env.PWD!;
 
-  const IS_MONOREPO = fs.existsSync(resolve(packageRoot, './modules'));
+  const IsMonorepo = fs.existsSync(resolve(packageRoot, './modules'));
 
   const userConfig = await getUserConfig(packageRoot);
 
@@ -132,7 +129,7 @@ export async function getOcularConfig(
     },
 
     lint: {
-      paths: IS_MONOREPO ? ['modules'] : ['src'],
+      paths: IsMonorepo ? ['modules'] : ['src'],
       extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx', 'd.ts']
     },
 

@@ -14,8 +14,8 @@ export function execShellCommand(command: string, args: string[] = []) {
 }
 
 /** Returns the path to the root directory of ocular-dev-tools */
-export const ocularRoot: string = (function () {
-  let dir;
+export const ocularRoot: string = (() => {
+  let dir: string;
   try {
     dir = __dirname;
   } catch {

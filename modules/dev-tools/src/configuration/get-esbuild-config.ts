@@ -99,7 +99,6 @@ type BundleOptions = {
   sourcemap?: boolean;
 };
 
-/* eslint-disable max-statements,complexity */
 /** Returns esbuild config for building standalone bundles */
 export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions> {
   // This script must be executed in a submodule's directory
@@ -154,7 +153,7 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
     config.globalName = globalName;
   }
 
-  let externalGlobals;
+  let externalGlobals: Record<string, string> | undefined;
   switch (format) {
     case 'cjs':
     case 'esm':
@@ -192,6 +191,7 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
       })
     };
 
+    // biome-ignore lint/suspicious/noConsole: Debug mode intentionally prints the resolved config.
     console.log(util.inspect(printableConfig, {showHidden: false, depth: null, colors: true}));
   }
 

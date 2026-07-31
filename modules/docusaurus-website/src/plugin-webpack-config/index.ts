@@ -24,7 +24,8 @@ export default function (
       }
 
       if (debug) {
-        console.log(util.inspect(_config.module, {depth: null})); // eslint-disable-line
+        // biome-ignore lint/suspicious/noConsole: Debug mode intentionally prints webpack internals.
+        console.log(util.inspect(_config.module, {depth: null}));
       }
 
       // Symlink docs crash otherwise, see https://github.com/facebook/docusaurus/issues/6257
