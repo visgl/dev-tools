@@ -26,10 +26,5 @@
     "ts-morph": "^21.0.0"
   },
   "pre-commit": "pre-commit",
-  "pre-push": "pre-push",
-  "dependencies": {},
-  "volta": {
-    "node": "22.20.0",
-    "yarn": "1.22.19"
-  }
+  "pre-push": "pre-push"
 }
