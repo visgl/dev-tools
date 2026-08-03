@@ -1,6 +1,8 @@
 import {expect, test} from 'vitest';
 import type {TestProjectInlineConfiguration} from 'vitest/config';
 import {getOcularConfig, getVitestConfig} from '@vis.gl/dev-tools';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
 test('dev-tools#getConfig', () => {
   expect(getOcularConfig).toBeTypeOf('function');
@@ -52,4 +54,18 @@ test('dev-tools#getVitestConfig supports legacy project overrides', () => {
     environment: 'node',
     include: ['test/legacy.spec.ts']
   });
+});
+
+test('dev-tools#getVitestConfig resolves explicit wildcard aliases to their wildcard target', () => {
+  const fixturePath = fileURLToPath(new URL('./fixtures/tsconfig-aliases.json', import.meta.url));
+  const config = getVitestConfig({tsconfigProjects: [fixturePath]});
+  const aliases = config.resolve?.alias as Array<{find: string | RegExp; replacement: string}>;
+  const subpath = '@example/package/feature';
+  const matchingAlias = aliases.find(({find}) =>
+    typeof find === 'string' ? find === subpath : find.test(subpath)
+  );
+
+  expect(matchingAlias?.replacement).toBe(
+    path.resolve(path.dirname(fixturePath), 'src/$1').replace(/\\/g, '/')
+  );
 });
