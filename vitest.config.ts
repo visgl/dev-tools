@@ -4,7 +4,9 @@ export default getVitestConfig({
   projects: {
     node: {
       test: {
-        include: ['modules/**/*.spec.ts']
+        include: ['modules/**/*.spec.ts'],
+        // TypeScript compiler transforms become substantially slower under coverage on CI.
+        testTimeout: 120_000
       }
     }
   },

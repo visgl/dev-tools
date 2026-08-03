@@ -34,7 +34,7 @@ test('dev-tools#getVitestConfig merges and adds projects', () => {
     test: {
       environment: 'node',
       include: ['test/custom.spec.ts'],
-      testTimeout: 30_000
+      testTimeout: 60_000
     }
   });
   expect(projects[2]).toMatchObject({

@@ -61,7 +61,7 @@ export function getVitestConfig(options: VitestConfigOptions = {}) {
       test: {
         name: 'node',
         environment: 'node',
-        testTimeout: 30_000,
+        testTimeout,
         include: ['modules/**/*.node.spec.{ts,js}', 'test/**/*.node.spec.{ts,js}'],
         exclude: excludePatterns,
         ...node
