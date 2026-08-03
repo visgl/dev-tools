@@ -16,8 +16,7 @@
     "test-headless": "ocular-test headless",
     "publish-beta": "npm run build && ocular-publish beta",
     "publish-prod": "npm run build && ocular-publish prod",
-    "pre-commit": "yarn lint",
-    "pre-push": "ocular-lint pre-commit && ocular-test node"
+    "pre-commit": "ocular-lint && ocular-test node"
   },
   "devDependencies": {
     "@luma.gl/constants": "^9.0.0-beta",
@@ -26,6 +25,5 @@
     "pre-push": "^0.1.1",
     "ts-morph": "^21.0.0"
   },
-  "pre-commit": "pre-commit",
-  "pre-push": "pre-push"
+  "pre-commit": "pre-commit"
 }
