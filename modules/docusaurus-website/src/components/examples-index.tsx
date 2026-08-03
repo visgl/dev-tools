@@ -1,5 +1,5 @@
 import React from 'react';
-// @ts-ignore Internal API
+// @ts-expect-error Internal API
 import {useDocsSidebar} from '@docusaurus/plugin-content-docs/client';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styled from 'styled-components';

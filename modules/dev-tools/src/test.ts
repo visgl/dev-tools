@@ -15,7 +15,8 @@ const viteConfigPath = ocularConfig.vite.configPath;
 // c8 default directory for coverage data
 const CoverageTempDir = './coverage/tmp';
 
-console.log(`Running ${mode} tests...`); // eslint-disable-line
+// biome-ignore lint/suspicious/noConsole: The CLI reports the selected test mode to the user.
+console.log(`Running ${mode} tests...`);
 
 switch (mode) {
   case 'cover':
@@ -205,7 +206,7 @@ function sourcemapFromDataUrl(url: string): string | null {
   const decodedData = base64 ? Buffer.from(data, 'base64').toString('utf8') : data;
   try {
     return JSON.parse(decodedData);
-  } catch (err) {
+  } catch {
     return null;
   }
 }

@@ -27,11 +27,7 @@
       "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     },
-    "./configuration": {
-      "types": "./dist/configuration/index.d.ts",
-      "require": "./dist/configuration/index.cjs",
-      "import": "./dist/configuration/index.js"
-    }
+    "./biome.jsonc": "./src/configuration/biome.jsonc"
   },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
@@ -50,23 +46,16 @@
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.0",
+    "@biomejs/biome": "^2.4.8",
     "@probe.gl/test-utils": "^4.0.6",
     "c8": "^7.12.0",
     "coveralls": "^3.0.3",
     "deepmerge": "^4.2.2",
     "esbuild": "^0.16.7",
     "esbuild-plugin-external-global": "^1.0.1",
-    "eslint": "^8.52.0",
-    "eslint-config-prettier": "^8.0.0",
-    "eslint-plugin-import": "^2.28.0",
-    "eslint-plugin-jsx-a11y": "^6.1.2",
-    "eslint-plugin-markdown": "^2.2.0",
-    "eslint-plugin-react": "^7.22.0",
-    "eslint-plugin-react-hooks": "^4.0.0",
     "glob": "^7.1.4",
     "lerna": "^8.1.0",
     "minimatch": "^3.0.0",
-    "prettier": "^3.2.0",
     "semver": "^7.6.0",
     "tap-spec": "^5.0.0",
     "tape": "^4.11.0",
@@ -75,7 +64,6 @@
     "ts-patch": "^3.1.2",
     "tsconfig-paths": "^4.1.1",
     "typescript": "^5.2.2",
-    "typescript-eslint": "^7.7.0",
     "vite": "^4.5.0"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 # Welcome
 
 ocular is a set of tools to help build and publish open source frameworks. It contains:
-- a `dev-tools` module that installs and provides base configurations for tools like webpack, babel, lerna, eslint prettier etc.
+- a `dev-tools` module that installs and provides base configurations for tools such as Biome, Vite, esbuild and lerna.
 - a `gatsby-theme-ocular` module that contains a markdown to HTML converter to make it easy to build websites.
 ## About ocular-dev-tools
 
@@ -26,4 +26,3 @@ We wanted:
 Happy documenting!
 
 To find out more, go to [get started](get-started.md)
-

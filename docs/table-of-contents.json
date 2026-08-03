@@ -82,12 +82,6 @@
               "entry": "modules/dev-tools/docs/api-reference/get-babel-config"
             },
             {
-              "entry": "modules/dev-tools/docs/api-reference/get-eslint-config"
-            },
-            {
-              "entry": "modules/dev-tools/docs/api-reference/get-prettier-config"
-            },
-            {
               "entry": "modules/dev-tools/docs/api-reference/get-webpack-config"
             }
           ]

@@ -20,7 +20,7 @@ export function getModuleInfo(path: string): ModuleInfo | null {
         path,
         packageInfo
       };
-    } catch (err) {
+    } catch {
       // ignore if sub directory does not contain package.json
     }
   }

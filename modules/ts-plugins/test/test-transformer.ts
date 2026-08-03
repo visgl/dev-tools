@@ -38,7 +38,7 @@ export function transpile({
   if (config.after) {
     customTransformers.after = [transform];
   } else if (config.afterDeclarations) {
-    // @ts-ignore
+    // @ts-expect-error
     customTransformers.afterDeclarations = [transform];
   } else {
     customTransformers.before = [transform];

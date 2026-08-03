@@ -1,0 +1,43 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.8/schema.json",
+  "extends": ["./modules/dev-tools/src/configuration/biome.jsonc"],
+  "files": {
+    "includes": [
+      "!**/dist/**",
+      "!**/build/**",
+      "!**/.cache/**",
+      "modules/**/*.js",
+      "modules/**/*.jsx",
+      "modules/**/*.ts",
+      "modules/**/*.tsx",
+      "scripts/**/*.js",
+      "scripts/**/*.jsx",
+      "scripts/**/*.ts",
+      "scripts/**/*.tsx",
+      "!**/test-case-*.ts"
+    ]
+  },
+  "linter": {
+    "rules": {
+      "a11y": {
+        "recommended": false
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off",
+        "useHookAtTopLevel": "off"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off",
+        "noConsole": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["modules/docusaurus-website/**/*.tsx"],
+      "javascript": {
+        "jsxRuntime": "reactClassic"
+      }
+    }
+  ]
+}
