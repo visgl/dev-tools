@@ -7,7 +7,7 @@
     "modules/*"
   ],
   "scripts": {
-    "bootstrap": "yarn && ocular-bootstrap && npm run build",
+    "bootstrap": "ocular-bootstrap && npm run build",
     "build": "ocular-clean && yarn workspace @vis.gl/dev-tools exec tspc -b tsconfig.json && ocular-build",
     "cover": "ocular-test node --coverage",
     "lint": "ocular-lint",
@@ -21,6 +21,7 @@
   "devDependencies": {
     "@luma.gl/constants": "^9.0.0-beta",
     "@vis.gl/dev-tools": "workspace:*",
+    "playwright": "^1.58.0",
     "pre-commit": "^1.2.2",
     "pre-push": "^0.1.1",
     "ts-morph": "^21.0.0"

@@ -31,10 +31,11 @@ jobs:
       - name: Cache Yarn Berry artifacts
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.yarn/berry/cache
-            .yarn/install-state.gz
+          path: ~/.yarn/berry/cache
           key: ${{ runner.os }}-yarn4-${{ hashFiles('yarn.lock', '.yarnrc.yml', 'package.json') }}
+
+      - name: Install dependencies
+        run: yarn install --immutable
 
       - name: Bootstrap
         run: |

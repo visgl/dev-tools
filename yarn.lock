@@ -4643,7 +4643,6 @@ __metadata:
     glob: "npm:^7.1.4"
     lerna: "npm:^8.1.0"
     minimatch: "npm:^3.0.0"
-    playwright: "npm:^1.58.0"
     semver: "npm:^7.6.0"
     ts-node: "npm:~10.9.0"
     ts-patch: "npm:^3.1.2"
@@ -12830,6 +12829,7 @@ __metadata:
   dependencies:
     "@luma.gl/constants": "npm:^9.0.0-beta"
     "@vis.gl/dev-tools": "workspace:*"
+    playwright: "npm:^1.58.0"
     pre-commit: "npm:^1.2.2"
     pre-push: "npm:^0.1.1"
     ts-morph: "npm:^21.0.0"
