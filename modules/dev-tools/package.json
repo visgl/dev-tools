@@ -48,12 +48,11 @@
     "@vitest/browser-playwright": "^4.0.18",
     "@vitest/coverage-v8": "^4.0.18",
     "deepmerge": "^4.2.2",
-    "esbuild": "^0.16.7",
+    "esbuild": "^0.28.1",
     "esbuild-plugin-external-global": "^1.0.1",
     "glob": "^7.1.4",
     "lerna": "^8.1.0",
     "minimatch": "^3.0.0",
-    "playwright": "^1.58.0",
     "semver": "^7.6.0",
     "ts-node": "~10.9.0",
     "ts-patch": "^3.1.2",
@@ -61,6 +60,9 @@
     "typescript": "^5.2.2",
     "vite": "^7.3.1",
     "vitest": "^4.0.18"
+  },
+  "peerDependencies": {
+    "playwright": "^1.58.0"
   },
   "engines": {
     "node": ">= 22"

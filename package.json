@@ -7,8 +7,8 @@
     "modules/*"
   ],
   "scripts": {
-    "bootstrap": "yarn && ocular-bootstrap && npm run build",
-    "build": "ocular-clean && tspc -b modules/dev-tools/tsconfig.json && ocular-build",
+    "bootstrap": "ocular-bootstrap && npm run build",
+    "build": "ocular-clean && yarn workspace @vis.gl/dev-tools exec tspc -b tsconfig.json && ocular-build",
     "cover": "ocular-test node --coverage",
     "lint": "ocular-lint",
     "test": "ocular-test node headless",
@@ -16,15 +16,16 @@
     "test-headless": "ocular-test headless",
     "publish-beta": "npm run build && ocular-publish beta",
     "publish-prod": "npm run build && ocular-publish prod",
-    "pre-commit": "yarn lint",
-    "pre-push": "ocular-lint pre-commit && ocular-test node"
+    "pre-commit": "ocular-lint && ocular-test node"
   },
   "devDependencies": {
     "@luma.gl/constants": "^9.0.0-beta",
+    "@vis.gl/dev-tools": "workspace:*",
+    "playwright": "^1.58.0",
     "pre-commit": "^1.2.2",
     "pre-push": "^0.1.1",
     "ts-morph": "^21.0.0"
   },
   "pre-commit": "pre-commit",
-  "pre-push": "pre-push"
+  "packageManager": "yarn@4.18.0+sha512.fcb8716fe7cd0eece141ffc18b92193a9df9204c1ba83189c288835223fc0bbe64af473bab0d5e9927a7daeb5caf2bb07eb2787cc9338ca040ea125f2a1f2f7e"
 }

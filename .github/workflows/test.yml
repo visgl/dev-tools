@@ -21,8 +21,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: yarn
-          cache-dependency-path: yarn.lock
+
+      - name: Enable pinned Yarn
+        run: |
+          corepack enable
+          corepack install
+          yarn --version
+
+      - name: Cache Yarn Berry artifacts
+        uses: actions/cache@v4
+        with:
+          path: ~/.yarn/berry/cache
+          key: ${{ runner.os }}-yarn4-${{ hashFiles('yarn.lock', '.yarnrc.yml', 'package.json') }}
+
+      - name: Install dependencies
+        run: yarn install --immutable
 
       - name: Bootstrap
         run: |

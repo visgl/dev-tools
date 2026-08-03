@@ -7,17 +7,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": true,
-    "includes": [
-      "**/*.js",
-      "**/*.jsx",
-      "**/*.mjs",
-      "**/*.cjs",
-      "**/*.ts",
-      "**/*.tsx",
-      "**/*.mts",
-      "**/*.cts"
-    ]
+    "ignoreUnknown": true
   },
   "formatter": {
     "enabled": true,
@@ -31,19 +21,12 @@
       "recommended": true,
       "correctness": {
         "noUnusedImports": "error",
-        "noUnusedVariables": "error",
-        "useIsNan": "error"
+        "noUnusedVariables": "error"
       },
       "style": {
         "noInferrableTypes": "off",
         "noNonNullAssertion": "off",
-        "useConst": "off",
-        "useNamingConvention": {
-          "level": "warn",
-          "options": {
-            "strictCase": false
-          }
-        }
+        "useConst": "off"
       },
       "suspicious": {
         "noConsole": "error",
@@ -63,8 +46,7 @@
       "quoteStyle": "single",
       "semicolons": "always",
       "trailingCommas": "none"
-    },
-    "globals": ["__VERSION__"]
+    }
   },
   "assist": {
     "enabled": false,

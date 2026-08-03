@@ -191,12 +191,6 @@ function getTsconfigAliases(tsconfigProjects: string[]) {
         });
       } else {
         const replacement = path.resolve(configDirectory, baseUrl, firstTarget).replace(/\\/g, '/');
-        // TypeScript treats an exact package path as the base for subpath imports too.
-        aliases.push({
-          key: `${aliasPattern}/*`,
-          find: new RegExp(`^${escapeRegExp(aliasPattern)}/(.+)$`),
-          replacement: `${replacement}/$1`
-        });
         aliases.push({
           key: aliasPattern,
           find: aliasPattern,
