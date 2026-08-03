@@ -1,4 +1,4 @@
-import test from 'tape-promise/tape';
+import {expect, test} from 'vitest';
 import {transpile, assertSourceEqual} from './test-transformer.js';
 // @ts-expect-error Aliased import, remapped to valid path in esm-loader
 import inlineConstants from '@vis.gl/ts-plugins/ts-transform-inline-webgl-constants';
@@ -40,7 +40,7 @@ console.log(GL[name]);
   }
 ];
 
-test('ts-transform-inline-webgl-constants', (t) => {
+test('ts-transform-inline-webgl-constants', () => {
   for (const testCase of testCases) {
     const result = transpile({
       source: testCase.input,
@@ -48,8 +48,6 @@ test('ts-transform-inline-webgl-constants', (t) => {
       config: {}
     });
 
-    t.is(assertSourceEqual(result, testCase.output), true, testCase.title);
+    expect(assertSourceEqual(result, testCase.output), testCase.title).toBe(true);
   }
-
-  t.end();
 });

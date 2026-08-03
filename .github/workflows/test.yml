@@ -28,13 +28,18 @@ jobs:
         run: |
           yarn bootstrap
 
+      - name: Install browser
+        run: |
+          yarn playwright install --with-deps chromium
+
       - name: Run tests
         run: |
           npm run lint
+          npm run test
+          npm run test-headless
           npm run cover
 
       - name: Coveralls
-        if: matrix.node-version == 18
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

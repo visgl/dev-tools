@@ -1,11 +1,11 @@
-import test from 'tape-promise/tape';
+import {expect, test} from 'vitest';
 import ts from 'typescript';
 import type {PluginConfig} from 'ts-patch';
 import {transpile, assertSourceEqual} from './test-transformer.js';
 // @ts-expect-error Aliased import, remapped to valid path in esm-loader
 import transformWebGPU from '@vis.gl/ts-plugins/ts-transform-webgpu';
 
-test('ts-transform-webgpu: strips WebGPU code', (t) => {
+test('ts-transform-webgpu: strips WebGPU code', () => {
   const result = transpileWithProgram({
     source: `\
 const plain = \`keep me\`;
@@ -21,7 +21,7 @@ const backend = isWebGPU ? 'webgpu' : 'webgl';
     config: {webGPUEnabled: false}
   });
 
-  t.is(
+  expect(
     assertSourceEqual(
       result,
       `\
@@ -34,10 +34,8 @@ const nested = false;
 const isWebGPU = false;
 const backend = 'webgl';
 `
-    ),
-    true
-  );
-  t.end();
+    )
+  ).toBe(true);
 });
 
 function transpileWithProgram({
@@ -90,7 +88,7 @@ function transpileWithProgram({
   return output;
 }
 
-test('ts-transform-webgpu: preserves WebGPU code', (t) => {
+test('ts-transform-webgpu: preserves WebGPU code', () => {
   const result = transpile({
     source: `\
 const shader = /* wgsl */ \`shader source\`;
@@ -101,7 +99,7 @@ const backend = supported ? 'webgpu' : 'webgl';
     config: {webGPUEnabled: true}
   });
 
-  t.is(
+  expect(
     assertSourceEqual(
       result,
       `\
@@ -109,13 +107,11 @@ const shader = /* wgsl */ \`shader source\`;
 const supported = true;
 const backend = supported ? 'webgpu' : 'webgl';
 `
-    ),
-    true
-  );
-  t.end();
+    )
+  ).toBe(true);
 });
 
-test('ts-transform-webgpu: replaces WGSL module exports', (t) => {
+test('ts-transform-webgpu: replaces WGSL module exports', () => {
   const result = transpile({
     sourceFileName: 'shader.wgsl.ts',
     source: `\
@@ -135,7 +131,7 @@ export interface ShaderModule {
     config: {webGPUEnabled: false}
   });
 
-  t.is(
+  expect(
     assertSourceEqual(
       result,
       `\
@@ -143,8 +139,6 @@ export const source = null;
 export const getShader = () => null;
 export default () => null;
 `
-    ),
-    true
-  );
-  t.end();
+    )
+  ).toBe(true);
 });

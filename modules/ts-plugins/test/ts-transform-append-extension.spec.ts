@@ -1,4 +1,4 @@
-import test from 'tape-promise/tape';
+import {expect, test} from 'vitest';
 import {transpile, assertSourceEqual} from './test-transformer.js';
 // @ts-expect-error Aliased import, remapped to valid path in esm-loader
 import appendExtension from '@vis.gl/ts-plugins/ts-transform-append-extension';
@@ -58,7 +58,7 @@ import("./shaders.js").then((modules) => { });`
   }
 ];
 
-test('ts-transform-append-extension', (t) => {
+test('ts-transform-append-extension', () => {
   for (const testCase of testCases) {
     const result = transpile({
       source: testCase.input,
@@ -67,8 +67,6 @@ test('ts-transform-append-extension', (t) => {
       outputType: testCase.config.afterDeclarations ? 'd.ts' : 'js'
     });
 
-    t.is(assertSourceEqual(result, testCase.output), true, testCase.title);
+    expect(assertSourceEqual(result, testCase.output), testCase.title).toBe(true);
   }
-
-  t.end();
 });

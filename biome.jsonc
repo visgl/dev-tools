@@ -14,6 +14,11 @@
       "scripts/**/*.jsx",
       "scripts/**/*.ts",
       "scripts/**/*.tsx",
+      "test/**/*.js",
+      "test/**/*.jsx",
+      "test/**/*.ts",
+      "test/**/*.tsx",
+      "vitest.config.ts",
       "!**/test-case-*.ts"
     ]
   },

@@ -1,8 +1,8 @@
-import test from 'tape-promise/tape';
+import {expect, test} from 'vitest';
 // @ts-expect-error Aliased import
 import {getCustomId} from '@vis.gl/docusaurus-website/write-heading-ids';
 
-test('write-heading-ids', (t) => {
+test('write-heading-ids', () => {
   const testCases = [
     {
       input: `The line width of each object, in units specified by widthUnits (default pixels). `,
@@ -52,8 +52,6 @@ test('write-heading-ids', (t) => {
   ];
 
   for (const testCase of testCases) {
-    t.is(getCustomId(testCase.input)?.[2], testCase.output, testCase.title);
+    expect(getCustomId(testCase.input)?.[2], testCase.title).toBe(testCase.output);
   }
-
-  t.end();
 });

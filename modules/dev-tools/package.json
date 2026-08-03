@@ -44,32 +44,26 @@
   },
   "scripts": {},
   "dependencies": {
-    "@esbuild-plugins/node-globals-polyfill": "^0.2.0",
-    "@esbuild-plugins/node-modules-polyfill": "^0.2.0",
     "@biomejs/biome": "^2.4.8",
-    "@probe.gl/test-utils": "^4.0.6",
-    "c8": "^7.12.0",
-    "coveralls": "^3.0.3",
+    "@vitest/browser": "^4.0.18",
+    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/coverage-v8": "^4.0.18",
     "deepmerge": "^4.2.2",
     "esbuild": "^0.16.7",
     "esbuild-plugin-external-global": "^1.0.1",
     "glob": "^7.1.4",
     "lerna": "^8.1.0",
     "minimatch": "^3.0.0",
+    "playwright": "^1.58.0",
     "semver": "^7.6.0",
-    "tap-spec": "^5.0.0",
-    "tape": "^4.11.0",
-    "tape-promise": "^4.0.0",
     "ts-node": "~10.9.0",
     "ts-patch": "^3.1.2",
     "tsconfig-paths": "^4.1.1",
     "typescript": "^5.2.2",
-    "vite": "^4.5.0"
-  },
-  "devDependencies": {
-    "puppeteer": "^22.0.0"
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
   },
   "engines": {
-    "node": ">= 18"
+    "node": ">= 22"
   }
 }
