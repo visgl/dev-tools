@@ -2,7 +2,7 @@
   "name": "@vis.gl/dev-tools",
   "description": "Dev tools for vis.gl frameworks",
   "license": "MIT",
-  "version": "1.0.3",
+  "version": "2.0.0-alpha.1",
   "type": "module",
   "publishConfig": {
     "access": "public"
@@ -34,15 +34,14 @@
   "bin": {
     "ocular-bootstrap": "./scripts/bootstrap.js",
     "ocular-build": "./scripts/build.js",
-    "ocular-bundle": "./scripts/bundle.js",
     "ocular-bump": "./scripts/bump.js",
+    "ocular-bundle": "./scripts/bundle.js",
     "ocular-clean": "./scripts/clean.js",
     "ocular-lint": "./scripts/lint.js",
     "ocular-metrics": "./scripts/metrics.js",
     "ocular-publish": "./scripts/publish.js",
     "ocular-test": "./scripts/test.js"
   },
-  "scripts": {},
   "dependencies": {
     "@biomejs/biome": "^2.4.8",
     "@vitest/browser": "^4.0.18",

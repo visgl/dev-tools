@@ -2,7 +2,7 @@
   "name": "@vis.gl/docusaurus-website",
   "description": "Docusaurus setup for vis.gl frameworks",
   "license": "MIT",
-  "version": "1.0.3",
+  "version": "2.0.0-alpha.1",
   "type": "module",
   "publishConfig": {
     "access": "public"
@@ -40,7 +40,6 @@
   },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
-  "scripts": {},
   "dependencies": {
     "@cmfcmf/docusaurus-search-local": "^1.0.0",
     "@docusaurus/plugin-client-redirects": "^3.0.0",

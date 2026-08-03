@@ -1,3 +1,8 @@
+## v2.0.0-alpha.1
+
+- feat(dev-tools): Migrate tape to vitest (#44)
+- feat(dev-tools): Replace eslint with biome (#42)
+
 ## v1.0.3
 
 -  feat(ts-plugins): Add webgpu transform (#40)
