@@ -21,8 +21,7 @@
       "recommended": true,
       "correctness": {
         "noUnusedImports": "error",
-        "noUnusedVariables": "error",
-        "useIsNan": "error"
+        "noUnusedVariables": "error"
       },
       "style": {
         "noInferrableTypes": "off",
@@ -47,8 +46,7 @@
       "quoteStyle": "single",
       "semicolons": "always",
       "trailingCommas": "none"
-    },
-    "globals": ["__VERSION__"]
+    }
   },
   "assist": {
     "enabled": false,
