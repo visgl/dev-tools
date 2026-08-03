@@ -1,3 +1,7 @@
+## v2.0.0-alpha.2
+
+- fix(dev-tools): various bug fixes (#47)
+
 ## v2.0.0-alpha.1
 
 - feat(dev-tools): Migrate tape to vitest (#44)
