@@ -1,4 +1,4 @@
-import test from 'tape-promise/tape';
+import {expect, test} from 'vitest';
 import {transpile, assertSourceEqual} from './test-transformer.js';
 // @ts-expect-error Aliased import, remapped to valid path in esm-loader
 import versionInline from '@vis.gl/ts-plugins/ts-transform-version-inline';
@@ -24,7 +24,7 @@ const testCases = [
   }
 ];
 
-test('ts-transform-version-inline', (t) => {
+test('ts-transform-version-inline', () => {
   for (const testCase of testCases) {
     const result = transpile({
       source: testCase.input,
@@ -32,8 +32,6 @@ test('ts-transform-version-inline', (t) => {
       config: testCase.config
     });
 
-    t.is(assertSourceEqual(result, testCase.output), true, testCase.title);
+    expect(assertSourceEqual(result, testCase.output), testCase.title).toBe(true);
   }
-
-  t.end();
 });

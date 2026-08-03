@@ -62,13 +62,13 @@
               "entry": "modules/dev-tools/docs/cli/ocular-lint"
             },
             {
+              "entry": "modules/dev-tools/docs/cli/ocular-test"
+            },
+            {
               "entry": "modules/dev-tools/docs/cli/ocular-metrics"
             },
             {
               "entry": "modules/dev-tools/docs/cli/ocular-publish"
-            },
-            {
-              "entry": "modules/dev-tools/docs/cli/ocular-test"
             },
             {
               "entry": "modules/dev-tools/docs/cli/ocular-bump"

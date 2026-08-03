@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'node:url';
 
-import test from 'tape-promise/tape';
+import {expect, test} from 'vitest';
 import {transpile, assertSourceEqual} from '../test-transformer.js';
 // @ts-expect-error Aliased import, remapped to valid path in esm-loader
 import removeGLSLComments from '@vis.gl/ts-plugins/ts-transform-remove-glsl-comments';
@@ -44,7 +44,7 @@ const testCases = [
   }
 ];
 
-test('ts-transform-remove-glsl-comments', (t) => {
+test('ts-transform-remove-glsl-comments', () => {
   for (const testCase of testCases) {
     const result = transpile({
       sourceFileName: testCase.fileName,
@@ -54,8 +54,8 @@ test('ts-transform-remove-glsl-comments', (t) => {
     });
     const expected = loadSourceFromFile(testCase.output);
 
-    t.is(assertSourceEqual(result, expected, {ignoreEmptyLines: false}), true, testCase.title);
+    expect(assertSourceEqual(result, expected, {ignoreEmptyLines: false}), testCase.title).toBe(
+      true
+    );
   }
-
-  t.end();
 });

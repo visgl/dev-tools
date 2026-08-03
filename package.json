@@ -9,9 +9,11 @@
   "scripts": {
     "bootstrap": "yarn && ocular-bootstrap && npm run build",
     "build": "ocular-clean && tspc -b modules/dev-tools/tsconfig.json && ocular-build",
-    "cover": "ocular-test cover",
+    "cover": "ocular-test node --coverage",
     "lint": "ocular-lint",
-    "test": "ocular-test node",
+    "test": "ocular-test node headless",
+    "test-browser": "ocular-test browser",
+    "test-headless": "ocular-test headless",
     "publish-beta": "npm run build && ocular-publish beta",
     "publish-prod": "npm run build && ocular-publish prod",
     "pre-commit": "yarn lint",
@@ -27,7 +29,7 @@
   "pre-push": "pre-push",
   "dependencies": {},
   "volta": {
-    "node": "18.19.0",
+    "node": "22.20.0",
     "yarn": "1.22.19"
   }
 }

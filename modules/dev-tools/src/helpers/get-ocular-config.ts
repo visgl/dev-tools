@@ -4,10 +4,6 @@ import fs from 'fs';
 import {resolve} from 'path';
 import getAliases, {getModuleInfo} from './aliases.js';
 import {shallowMerge, getValidPath, ocularRoot} from '../utils/utils.js';
-import type {BrowserTestDriver} from '@probe.gl/test-utils';
-
-// TODO - export from probe.gl
-type BrowserTestOptions = Parameters<BrowserTestDriver['run']>[0];
 
 /** User configuration from .ocularrc.js */
 export type OcularConfig = {
@@ -34,25 +30,7 @@ export type OcularConfig = {
     extensions?: string[];
   };
 
-  vite?: {
-    version?: number;
-    configPath?: string;
-  };
-
-  coverage?: {
-    test?: 'node' | 'browser';
-  };
-
-  browserTest?: {
-    server?: BrowserTestOptions['server'];
-    browser?: BrowserTestOptions['browser'];
-  };
-
   entry?: {
-    test?: string;
-    'test-browser'?: `${string}.html`;
-    bench?: string;
-    'bench-browser'?: `${string}.html`;
     size?: string[] | string;
   };
 };
@@ -82,25 +60,7 @@ export type MaterializedOcularConfig = {
     extensions: string[];
   };
 
-  vite: {
-    version: number;
-    configPath: string;
-  };
-
-  coverage: {
-    test: 'node' | 'browser';
-  };
-
-  browserTest?: {
-    server?: BrowserTestOptions['server'];
-    browser?: BrowserTestOptions['browser'];
-  };
-
   entry: {
-    test: string;
-    'test-browser': `${string}.html`;
-    bench: string;
-    'bench-browser': `${string}.html`;
     size: string[];
   };
 };
@@ -133,27 +93,10 @@ export async function getOcularConfig(
       extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx', 'd.ts']
     },
 
-    coverage: {
-      test: 'node'
-    },
-
     aliases: {},
 
     entry: {
-      test: 'test/index.ts',
-      'test-browser': 'test/index.html',
-      bench: 'test/bench/index.ts',
-      'bench-browser': 'test/bench/index.html',
       size: ['test/size.ts']
-    },
-
-    vite: {
-      version: 4,
-      configPath: getValidPath(
-        resolve(packageRoot, './vite.config.js'),
-        resolve(packageRoot, './vite.config.cjs'),
-        resolve(ocularRoot, 'dist/configuration/vite.config.js')
-      )!
     }
   };
 

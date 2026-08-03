@@ -4,7 +4,7 @@ Dev tools for vis.gl open source Javascript frameworks
 
 Contains developer targets for building, cleaning, linting, testing and publishing frameworks.
 
-* The testing script has a number of modes, it can run tests on both browser and node, it can run test on src or built distributions etc.
+* The Vitest configuration helper supports Node and Playwright-backed browser tests.
 * The linting feature uses Biome to format and lint JavaScript and TypeScript.
 * Supports both single module repos (all code in src) and monorepos (code in `modules/<module-name>/src`).
 
@@ -15,8 +15,9 @@ Note: flow is not currently integrated into ocular-dev-tools as we restrict its 
 ocular installs the necessary dependencies and provides working default configurations for
 
 - Biome
-- ts-node
-- vite
+- Vitest
+- Playwright
+- Vite
 
 Note that this list may grow over time.
 
@@ -30,8 +31,7 @@ Your `package.json` should looks something like:
 
 ```json
   "devDependencies": {
-    "ocular-dev-tools": "^2.0.0-alpha",
-    "puppeteer": "^22.0.0"
+    "@vis.gl/dev-tools": "^2.0.0"
   }
 ```
 
@@ -44,7 +44,8 @@ After installing you can set up your build scripts in package.json as follows:
     "lint": "ocular-lint",
     "metrics": "ocular-metrics",
     "publish": "ocular-publish",
-    "test": "ocular-test"
+    "test": "ocular-test node",
+    "test-headless": "ocular-test headless"
   },
 ```
 
@@ -58,7 +59,7 @@ After installing you can set up your build scripts in package.json as follows:
 | [`ocular-clean`](docs/dev-tools/cli/ocular-clean) | `clean` | Remove all transpiled files in preparation for a new build. |
 | [`ocular-build`](docs/dev-tools/cli/ocular-build) | `build` | Transpile all modules. |
 | [`ocular-lint`](docs/dev-tools/cli/ocular-lint) | `lint` | Format and lint the code base with Biome. |
-| [`ocular-test`](docs/dev-tools/cli/ocular-test) | `test` | Run tests. |
+| [`ocular-test`](docs/dev-tools/cli/ocular-test) | `test` | Run a named Vitest project. |
 | [`ocular-metrics`](docs/dev-tools/cli/ocular-metrics) | `metrics` | Bundle the source and report the bundle size. |
 | [`ocular-publish`](docs/dev-tools/cli/ocular-publish) | `publish` | Publish the packages, create git tag and push. |
 
@@ -74,8 +75,8 @@ A file `.ocularrc.js` can be placed at the root of the package to customize the 
 - `esm` (Boolean) - set if tests should run using Node.js's ES module resolution. By default `true` if and only if `type: "module"` is found in the root package.json.
 - `lint` - options to control Biome's target paths
   + `paths` (Arrray) - directories to include when linting. Default `['modules', 'src']`
-- `aliases` (Object) - Module aliases to use in tests. Any import from a submodule is mapped to its source. Use this object to define additional mappings, for example `"test-data": "./test/sample-data`.
-- `nodeAliases` (Object) - Module aliases to use in node tests only.
+- `aliases` (Object) - Module aliases used by build tools.
+- `nodeAliases` (Object) - Module aliases used by Node build tools.
 - `typescript`
   + `project` (String) - path to the project's tsconfig
 - `bundle` - options to control esbuild behavior
@@ -84,13 +85,8 @@ A file `.ocularrc.js` can be placed at the root of the package to customize the 
   + `format` (String) - one of `cjs`, `esm`, `umd`, `iife`
   + `externals` (String[])
   + `globals` (Object) - import package from global variable.
-- `entry` (Object) - entry points for tests.
-  + `test` (String) - unit test entry point. Can be a `.js` or `.ts` file. Default `./test/index.ts`.
-  + `test-browser` (String) - unit test browser entry point. Can be a `.js`, `.ts` or `.html` file.  Default `./test/browser.ts`.
-  + `bench` (String) - benchmark entry point. Can be a `.js` or `.ts` file. Default `./test/bench/index.ts`.
-  + `bench-browser` (String) - benchmark browser entry point. Can be a `.js`, `.ts` or `.html` file. Default `./test/bench/browser.ts`.
+- `entry` (Object) - entry points for build utilities.
   + `size` (String | String[]) - metrics entry point(s). Can be a `.js` or `.ts` file. Default `./test/size.ts`.
-- `browserTest` (Object) - options for browser tests. Passed to [BrowserTestDriver.run](https://uber-web.github.io/probe.gl/#/documentation/api-reference-testing/browsertestdriver).
 
 
 #### Biome
@@ -111,7 +107,33 @@ extend the shared vis.gl defaults and add repository-specific file selection and
 When no project configuration exists, `ocular-lint` uses the packaged defaults directly.
 #### vite
 
-If `vite.config.js` is found at the root of the package, it is used to bundle units tests and benchmark tests for the browser. Otherwise, a default vite config is used.
+Create `vitest.config.ts` at the repository root and call `getVitestConfig()` for shared Node,
+headed-browser, and headless-browser projects. Node-only tests use `*.node.spec.ts`; browser tests
+use `*.browser.spec.ts`.
+
+```ts
+import {getVitestConfig} from '@vis.gl/dev-tools';
+
+export default getVitestConfig();
+```
+
+Customize a built-in project, disable one, or add arbitrary local projects with the `projects` map.
+Project configuration is deeply merged with a same-named default; arrays replace default arrays.
+
+```ts
+export default getVitestConfig({
+  projects: {
+    node: {test: {include: ['modules/**/*.spec.ts']}},
+    browser: false,
+    render: {
+      test: {include: ['test/render/**/*.spec.ts']}
+    }
+  }
+});
+```
+
+The map key becomes the project's Vitest name unless `test.name` is explicitly set. Custom projects
+may use any project-level Vitest options, including `resolve`, `optimizeDeps`, and `server`.
 
 
 ## ESM Repo
