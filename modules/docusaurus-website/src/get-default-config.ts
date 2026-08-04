@@ -135,12 +135,19 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
     url: siteUrl.origin,
     baseUrl: siteUrl.pathname,
     onBrokenLinks: 'warn',
-    onBrokenMarkdownLinks: 'warn',
+    markdown: {
+      hooks: {
+        onBrokenMarkdownLinks: 'warn'
+      }
+    },
     favicon: '/favicon.png',
     organizationName: 'visgl',
     projectName,
     trailingSlash: false,
     staticDirectories: ['static', resolve(cwd, '../static')],
+    future: {
+      faster: true
+    },
 
     presets: [
       [
