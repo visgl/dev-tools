@@ -1,3 +1,7 @@
+## v2.0.0-alpha.6
+
+- fix(docusaurus-website): future flags
+
 ## v2.0.0-alpha.5
 
 - feat(docusaurus-website): bump docusaurus to latest
