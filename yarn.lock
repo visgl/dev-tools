@@ -4447,7 +4447,6 @@ __metadata:
     "@biomejs/biome": "npm:^2.4.8"
     "@vitest/browser": "npm:^4.0.18"
     "@vitest/browser-playwright": "npm:^4.0.18"
-    "@vitest/coverage-v8": "npm:^4.0.18"
     deepmerge: "npm:^4.2.2"
     esbuild: "npm:^0.28.1"
     esbuild-plugin-external-global: "npm:^1.0.1"
@@ -4460,8 +4459,12 @@ __metadata:
     tsconfig-paths: "npm:^4.1.1"
     typescript: "npm:^5.2.2"
   peerDependencies:
+    "@vitest/coverage-v8": ^4.0.18
     playwright: ^1.58.0
     vitest: ^4.0.18
+  peerDependenciesMeta:
+    "@vitest/coverage-v8":
+      optional: true
   bin:
     ocular-bootstrap: ./scripts/bootstrap.js
     ocular-build: ./scripts/build.js
@@ -12639,6 +12642,7 @@ __metadata:
   dependencies:
     "@luma.gl/constants": "npm:^9.0.0-beta"
     "@vis.gl/dev-tools": "workspace:*"
+    "@vitest/coverage-v8": "npm:^4.0.18"
     playwright: "npm:^1.58.0"
     pre-commit: "npm:^1.2.2"
     ts-morph: "npm:^21.0.0"
