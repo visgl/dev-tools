@@ -50,7 +50,8 @@ function transpileWithProgram({
   const fileName = '/test.ts';
   const compilerOptions: ts.CompilerOptions = {
     module: ts.ModuleKind.ESNext,
-    target: ts.ScriptTarget.ESNext
+    target: ts.ScriptTarget.ESNext,
+    alwaysStrict: false
   };
   const sourceFile = ts.createSourceFile(
     fileName,

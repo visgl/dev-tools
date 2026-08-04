@@ -50,13 +50,13 @@
     "esbuild": "^0.28.1",
     "esbuild-plugin-external-global": "^1.0.1",
     "glob": "^7.1.4",
-    "lerna": "^8.1.0",
+    "lerna": "^10.0.0",
     "minimatch": "^3.0.0",
     "semver": "^7.6.0",
     "ts-node": "~10.9.0",
-    "ts-patch": "^3.1.2",
+    "ts-patch": "^4.0.1",
     "tsconfig-paths": "^4.1.1",
-    "typescript": "^5.2.2"
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "@vitest/coverage-v8": "^4.0.18",
@@ -69,6 +69,6 @@
     }
   },
   "engines": {
-    "node": ">= 22"
+    "node": "^22.15.0 || ^24.0.0 || ^26.0.0"
   }
 }
