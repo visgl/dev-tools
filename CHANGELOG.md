@@ -1,3 +1,7 @@
+## v2.0.0-alpha.5
+
+- feat(docusaurus-website): bump docusaurus to latest
+
 ## v2.0.0-alpha.4
 
 - feat(dev-tools): update to Typescript 6 (#50)
