@@ -46,7 +46,6 @@
     "@biomejs/biome": "^2.4.8",
     "@vitest/browser": "^4.0.18",
     "@vitest/browser-playwright": "^4.0.18",
-    "@vitest/coverage-v8": "^4.0.18",
     "deepmerge": "^4.2.2",
     "esbuild": "^0.28.1",
     "esbuild-plugin-external-global": "^1.0.1",
@@ -60,8 +59,14 @@
     "typescript": "^5.2.2"
   },
   "peerDependencies": {
+    "@vitest/coverage-v8": "^4.0.18",
     "playwright": "^1.58.0",
     "vitest": "^4.0.18"
+  },
+  "peerDependenciesMeta": {
+    "@vitest/coverage-v8": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">= 22"
