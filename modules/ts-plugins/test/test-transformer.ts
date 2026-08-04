@@ -1,4 +1,4 @@
-import {Project, ts} from 'ts-morph';
+import ts from 'typescript';
 import type {PluginConfig} from 'ts-patch';
 
 /**
@@ -19,37 +19,56 @@ export function transpile({
 }): string {
   const dts = outputType === 'd.ts';
 
-  const project = new Project({
-    compilerOptions: {
-      target: ts.ScriptTarget.ESNext,
-      module: ts.ModuleKind.ESNext,
-      declaration: dts
-    }
-  });
+  const compilerOptions: ts.CompilerOptions = {
+    target: ts.ScriptTarget.ESNext,
+    module: ts.ModuleKind.ESNext,
+    declaration: dts,
+    emitDeclarationOnly: dts,
+    alwaysStrict: false
+  };
+  const sourceFile = ts.createSourceFile(
+    sourceFileName,
+    source,
+    ts.ScriptTarget.ESNext,
+    true,
+    ts.ScriptKind.TS
+  );
+  const host = ts.createCompilerHost(compilerOptions);
+  const getSourceFile = host.getSourceFile.bind(host);
+  host.getSourceFile = (requestedFileName, languageVersion, ...args) =>
+    requestedFileName === sourceFileName
+      ? sourceFile
+      : getSourceFile(requestedFileName, languageVersion, ...args);
+  host.fileExists = (requestedFileName) =>
+    requestedFileName === sourceFileName || ts.sys.fileExists(requestedFileName);
+  host.readFile = (requestedFileName) =>
+    requestedFileName === sourceFileName ? source : ts.sys.readFile(requestedFileName);
 
-  project.createSourceFile(sourceFileName, source);
+  const program = ts.createProgram([sourceFileName], compilerOptions, host);
 
   const customTransformers: ts.CustomTransformers = {};
-  const transform: ts.TransformerFactory<ts.SourceFile> = transformer(
-    project.getProgram(),
-    config,
-    {ts}
-  );
+  const transform: ts.TransformerFactory<ts.SourceFile> = transformer(program, config, {ts});
   if (config.after) {
     customTransformers.after = [transform];
   } else if (config.afterDeclarations) {
-    // @ts-expect-error
     customTransformers.afterDeclarations = [transform];
   } else {
     customTransformers.before = [transform];
   }
 
-  const result = project.emitToMemory({
-    customTransformers,
-    emitOnlyDtsFiles: dts
-  });
-
-  return result.getFiles()[0].text;
+  let output = '';
+  program.emit(
+    undefined,
+    (outputFileName, text) => {
+      if (outputFileName.endsWith(dts ? '.d.ts' : '.js')) {
+        output = text;
+      }
+    },
+    undefined,
+    dts,
+    customTransformers
+  );
+  return output;
 }
 
 /**

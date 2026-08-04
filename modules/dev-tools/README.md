@@ -8,7 +8,7 @@ packages under `modules/`.
 
 ## Requirements
 
-- Node.js 22 or newer
+- Node.js 22.15 or newer
 - A root `.ocularrc.js`, `.ocularrc.cjs`, `.ocular.config.js`, or `.ocular.config.cjs` for commands
   that load repository configuration
 - A root `vitest.config.ts` when using `ocular-test`
