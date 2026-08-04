@@ -1,3 +1,7 @@
+## v2.0.0-alpha.3
+
+- fix(dev-tools): make vitest a peer dependency (#48)
+
 ## v2.0.0-alpha.2
 
 - fix(dev-tools): various bug fixes (#47)
