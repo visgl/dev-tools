@@ -146,6 +146,9 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
     trailingSlash: false,
     staticDirectories: ['static', resolve(cwd, '../static')],
     future: {
+      v4: {
+        removeLegacyPostBuildHeadAttribute: true
+      },
       faster: true
     },
 
