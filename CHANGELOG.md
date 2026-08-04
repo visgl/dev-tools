@@ -1,3 +1,9 @@
+## v2.0.0-alpha.4
+
+- feat(dev-tools): update to Typescript 6 (#50)
+- fix(dev-tools): move coverage dependency to optional peer
+- fix(dev-tools): bootstrap bin linking for yarn 4
+
 ## v2.0.0-alpha.3
 
 - fix(dev-tools): make vitest a peer dependency (#48)
