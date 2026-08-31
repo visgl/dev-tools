@@ -83,6 +83,7 @@ test('dev-tools#parseBundleArguments normalizes CLI values', () => {
       '--externals=@vis.gl/tangram-renderer,zod',
       '--target=chrome110,safari15',
       '--sourcemap',
+      '--sourcesContent=false',
       '--debug=false'
     ])
   ).toEqual({
@@ -92,6 +93,7 @@ test('dev-tools#parseBundleArguments normalizes CLI values', () => {
     externals: ['@vis.gl/tangram-renderer', 'zod'],
     target: ['chrome110', 'safari15'],
     sourcemap: true,
+    sourcesContent: false,
     debug: false
   });
 });
@@ -106,11 +108,13 @@ test('dev-tools#getBundleConfig passes normalized externals to esbuild', async (
   const config = await getBundleConfig({
     input: './bundle.ts',
     format: 'esm',
-    externals: ['@vis.gl/dev-tools', 'zod']
+    externals: ['@vis.gl/dev-tools', 'zod'],
+    sourcesContent: false
   });
 
   expect(config.entryPoints).toEqual(['./bundle.ts']);
   expect(config.external).toEqual(['@vis.gl/dev-tools', 'zod']);
+  expect(config.sourcesContent).toBe(false);
   expect(config.alias).not.toHaveProperty('@vis.gl/dev-tools');
   expect(config.alias).not.toHaveProperty('@vis.gl/dev-tools/test');
 });

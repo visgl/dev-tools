@@ -126,6 +126,7 @@ export type BundleOptions = {
   globals?: {[pattern: string]: string};
   debug?: boolean;
   sourcemap?: boolean;
+  sourcesContent?: boolean;
   watch?: boolean;
 };
 
@@ -183,7 +184,8 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
     externals,
     globalName,
     debug,
-    sourcemap = false
+    sourcemap = false,
+    sourcesContent = true
   } = opts;
 
   const normalizedExternals =
@@ -204,6 +206,7 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
     target,
     logLevel: 'info',
     sourcemap,
+    sourcesContent,
     plugins: []
   };
   if (globalName) {
