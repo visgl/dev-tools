@@ -14,8 +14,8 @@
     "test": "ocular-test node headless",
     "test-browser": "ocular-test browser",
     "test-headless": "ocular-test headless",
-    "publish-beta": "npm run build && ocular-publish beta",
-    "publish-prod": "npm run build && ocular-publish prod",
+    "publish-beta": "ocular-publish version-only-beta",
+    "publish-prod": "ocular-publish version-only-prod",
     "pre-commit": "ocular-lint && ocular-test node"
   },
   "devDependencies": {
