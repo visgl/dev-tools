@@ -1,6 +1,10 @@
 import {expect, test} from 'vitest';
 import type {TestProjectInlineConfiguration} from 'vitest/config';
 import {getOcularConfig, getVitestConfig} from '@vis.gl/dev-tools';
+import {getBundleConfig, parseBundleArguments} from '../src/configuration/get-esbuild-config.js';
+import {execFileSync} from 'node:child_process';
+import {mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -68,4 +72,80 @@ test('dev-tools#getVitestConfig resolves explicit wildcard aliases to their wild
   expect(matchingAlias?.replacement).toBe(
     path.resolve(path.dirname(fixturePath), 'src/$1').replace(/\\/g, '/')
   );
+});
+
+test('dev-tools#parseBundleArguments normalizes CLI values', () => {
+  expect(
+    parseBundleArguments([
+      './bundle.ts',
+      '--output=dist/index.js',
+      '--format=esm',
+      '--externals=@vis.gl/tangram-renderer,zod',
+      '--target=chrome110,safari15',
+      '--sourcemap',
+      '--debug=false'
+    ])
+  ).toEqual({
+    input: './bundle.ts',
+    output: 'dist/index.js',
+    format: 'esm',
+    externals: ['@vis.gl/tangram-renderer', 'zod'],
+    target: ['chrome110', 'safari15'],
+    sourcemap: true,
+    debug: false
+  });
+});
+
+test('dev-tools#parseBundleArguments requires an entry point', () => {
+  expect(() => parseBundleArguments(['--format=esm'])).toThrow(
+    'ocular-bundle requires a JavaScript or TypeScript entry point'
+  );
+});
+
+test('dev-tools#getBundleConfig passes normalized externals to esbuild', async () => {
+  const config = await getBundleConfig({
+    input: './bundle.ts',
+    format: 'esm',
+    externals: ['@vis.gl/tangram-renderer', 'zod']
+  });
+
+  expect(config.entryPoints).toEqual(['./bundle.ts']);
+  expect(config.external).toEqual(['@vis.gl/tangram-renderer', 'zod']);
+});
+
+test('ocular-bundle CLI bundles the requested entry point', () => {
+  const fixtureDirectory = mkdtempSync(path.join(tmpdir(), 'ocular-bundle-'));
+  const scriptPath = fileURLToPath(new URL('../scripts/bundle.js', import.meta.url));
+
+  try {
+    writeFileSync(
+      path.join(fixtureDirectory, 'package.json'),
+      JSON.stringify({name: 'ocular-bundle-fixture', type: 'module'})
+    );
+    writeFileSync(path.join(fixtureDirectory, '.ocularrc.js'), 'export default {};\n');
+    writeFileSync(
+      path.join(fixtureDirectory, 'entry.js'),
+      "import externalValue from 'external-package';\nexport const value = `fixture:${externalValue}`;\n"
+    );
+
+    execFileSync(
+      process.execPath,
+      [
+        scriptPath,
+        './entry.js',
+        '--env=dev',
+        '--output=./bundle.js',
+        '--format=esm',
+        '--externals=external-package,zod'
+      ],
+      {cwd: fixtureDirectory, stdio: 'pipe'}
+    );
+
+    const bundle = readFileSync(path.join(fixtureDirectory, 'bundle.js'), 'utf8');
+    expect(bundle).toContain('fixture:');
+    expect(bundle).toContain('from "external-package"');
+    expect(bundle).not.toContain('@vis.gl/dev-tools/scripts/bundle.js');
+  } finally {
+    rmSync(fixtureDirectory, {recursive: true, force: true});
+  }
 });

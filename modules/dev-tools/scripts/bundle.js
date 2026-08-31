@@ -1,31 +1,16 @@
 #!/usr/bin/env node
 
 import esbuild from 'esbuild';
-import {getBundleConfig} from '../dist/configuration/get-esbuild-config.js';
+import {getBundleConfig, parseBundleArguments} from '../dist/configuration/get-esbuild-config.js';
 
-// Parse command line arguments
-let entryPoint;
-const env = {};
-
-for (let i = 1; i < process.argv.length; i++) {
-  const arg = process.argv[i];
-  if (arg.startsWith('--')) {
-    const tokens = arg.slice(2).split('=');
-    env[tokens[0]] = tokens[1] === undefined ? true : tokens[1];
-  } else if (!entryPoint && arg.match(/\.(js|ts|cjs|mjs|jsx|tsx)$/)) {
-    entryPoint = arg;
-  }
-}
+const options = parseBundleArguments(process.argv.slice(2));
 
 run();
 
 async function run() {
-  const buildConfig = await getBundleConfig({
-    ...env,
-    input: entryPoint
-  });
+  const buildConfig = await getBundleConfig(options);
 
-  if (env.watch) {
+  if (options.watch) {
     buildConfig.watch = true;
     await esbuild.build(buildConfig);
     // biome-ignore lint/suspicious/noConsole: Verbose mode intentionally prints bundle diagnostics.

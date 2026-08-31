@@ -86,18 +86,47 @@ export async function getCJSExportConfig(opts: {
   };
 }
 
-type BundleOptions = {
+export type BundleOptions = {
   input: string;
   env?: 'dev' | 'prod';
   output?: string;
   format?: 'iife' | 'cjs' | 'esm' | 'umd';
   target?: string[];
-  externals?: string[];
+  externals?: string | string[];
   globalName?: string;
   globals?: {[pattern: string]: string};
   debug?: boolean;
   sourcemap?: boolean;
+  watch?: boolean;
 };
+
+/** Parses command-line arguments accepted by `ocular-bundle`. */
+export function parseBundleArguments(arguments_: string[]): BundleOptions {
+  const options: Record<string, string | string[] | boolean | undefined> = {};
+
+  for (const argument of arguments_) {
+    if (argument.startsWith('--')) {
+      const [key, ...valueParts] = argument.slice(2).split('=');
+      const value = valueParts.length > 0 ? valueParts.join('=') : true;
+
+      if (key === 'externals' || key === 'target') {
+        options[key] = typeof value === 'string' ? value.split(',').filter(Boolean) : [];
+      } else if (value === 'true' || value === 'false') {
+        options[key] = value === 'true';
+      } else {
+        options[key] = value;
+      }
+    } else if (!options.input && argument.match(/\.(js|ts|cjs|mjs|jsx|tsx)$/)) {
+      options.input = argument;
+    }
+  }
+
+  if (!options.input) {
+    throw new Error('ocular-bundle requires a JavaScript or TypeScript entry point');
+  }
+
+  return options as unknown as BundleOptions;
+}
 
 /** Returns esbuild config for building standalone bundles */
 export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions> {
@@ -128,12 +157,11 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
     sourcemap = false
   } = opts;
 
-  let externalPackages = Object.keys(packageInfo.peerDependencies || {});
-  if (typeof externals === 'string') {
-    externalPackages = externalPackages.concat((externals as string).split(','));
-  } else if (Array.isArray(externals)) {
-    externalPackages = externalPackages.concat(externals);
-  }
+  const normalizedExternals =
+    typeof externals === 'string' ? externals.split(',').filter(Boolean) : externals || [];
+  const externalPackages = Object.keys(packageInfo.peerDependencies || {}).concat(
+    normalizedExternals
+  );
 
   const config: BuildOptions = {
     entryPoints: [input],
@@ -159,8 +187,8 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
     case 'esm':
       // Use esbuild's built-in external functionality
       config.packages = 'external';
-      if (externals) {
-        config.external = externals;
+      if (normalizedExternals.length > 0) {
+        config.external = normalizedExternals;
       }
       break;
 
