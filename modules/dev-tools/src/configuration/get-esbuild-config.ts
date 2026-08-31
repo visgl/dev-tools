@@ -36,6 +36,35 @@ function getExternalGlobalsIIFE(externalPackages: string[], mapping: Record<stri
   return externals;
 }
 
+/**
+ * Removes workspace aliases that would otherwise take precedence over esbuild externals.
+ * @param aliases Ocular aliases resolved for the current monorepo.
+ * @param externalPackages Package names that must remain external to the bundle.
+ */
+function removeExternalAliases(
+  aliases: Record<string, string>,
+  externalPackages: string[]
+): Record<string, string> {
+  const filteredAliases = {...aliases};
+
+  for (const externalPackage of externalPackages) {
+    const packageName = externalPackage.endsWith('/*')
+      ? externalPackage.slice(0, -2)
+      : externalPackage;
+    if (packageName.includes('*')) {
+      continue;
+    }
+
+    for (const alias of Object.keys(filteredAliases)) {
+      if (alias === packageName || alias.startsWith(`${packageName}/`)) {
+        delete filteredAliases[alias];
+      }
+    }
+  }
+
+  return filteredAliases;
+}
+
 // esbuild does not support umd format
 // Work around from https://github.com/evanw/esbuild/issues/819
 // Template: https://webpack.js.org/configuration/output/#type-umd
@@ -170,7 +199,7 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
     // @ts-expect-error umd is not supported by esbuild, will be overwritten below
     format,
     minify: !devMode,
-    alias: ocularConfig.aliases,
+    alias: removeExternalAliases(ocularConfig.aliases, externalPackages),
     platform: 'browser',
     target,
     logLevel: 'info',

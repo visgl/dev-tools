@@ -106,11 +106,13 @@ test('dev-tools#getBundleConfig passes normalized externals to esbuild', async (
   const config = await getBundleConfig({
     input: './bundle.ts',
     format: 'esm',
-    externals: ['@vis.gl/tangram-renderer', 'zod']
+    externals: ['@vis.gl/dev-tools', 'zod']
   });
 
   expect(config.entryPoints).toEqual(['./bundle.ts']);
-  expect(config.external).toEqual(['@vis.gl/tangram-renderer', 'zod']);
+  expect(config.external).toEqual(['@vis.gl/dev-tools', 'zod']);
+  expect(config.alias).not.toHaveProperty('@vis.gl/dev-tools');
+  expect(config.alias).not.toHaveProperty('@vis.gl/dev-tools/test');
 });
 
 test('ocular-bundle CLI bundles the requested entry point', () => {
@@ -122,7 +124,16 @@ test('ocular-bundle CLI bundles the requested entry point', () => {
       path.join(fixtureDirectory, 'package.json'),
       JSON.stringify({name: 'ocular-bundle-fixture', type: 'module'})
     );
-    writeFileSync(path.join(fixtureDirectory, '.ocularrc.js'), 'export default {};\n');
+    writeFileSync(
+      path.join(fixtureDirectory, '.ocularrc.js'),
+      `export default {aliases: {'external-package': ${JSON.stringify(
+        path.join(fixtureDirectory, 'aliased-external.js')
+      )}}};\n`
+    );
+    writeFileSync(
+      path.join(fixtureDirectory, 'aliased-external.js'),
+      "export default 'incorrectly bundled';\n"
+    );
     writeFileSync(
       path.join(fixtureDirectory, 'entry.js'),
       "import externalValue from 'external-package';\nexport const value = `fixture:${externalValue}`;\n"
@@ -144,6 +155,7 @@ test('ocular-bundle CLI bundles the requested entry point', () => {
     const bundle = readFileSync(path.join(fixtureDirectory, 'bundle.js'), 'utf8');
     expect(bundle).toContain('fixture:');
     expect(bundle).toContain('from "external-package"');
+    expect(bundle).not.toContain('incorrectly bundled');
     expect(bundle).not.toContain('@vis.gl/dev-tools/scripts/bundle.js');
   } finally {
     rmSync(fixtureDirectory, {recursive: true, force: true});
