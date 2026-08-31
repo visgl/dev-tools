@@ -1,3 +1,7 @@
+## v2.0.0-alpha.7
+
+- fix(dev-tools): parse `ocular-bundle` entry points, targets and externals correctly (#52)
+
 ## v2.0.0-alpha.6
 
 - fix(docusaurus-website): future flags
