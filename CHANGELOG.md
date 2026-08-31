@@ -1,3 +1,7 @@
+## v2.0.0-alpha.8
+
+- fix(dev-tools): preserve external workspace packages in `ocular-bundle` (#56)
+
 ## v2.0.0-alpha.7
 
 - fix(dev-tools): parse `ocular-bundle` entry points, targets and externals correctly (#52)
