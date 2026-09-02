@@ -1,3 +1,7 @@
+## v2.0.0-alpha.9
+
+- chore: use trusted publishing
+
 ## v2.0.0-alpha.8
 
 - fix(dev-tools): preserve external workspace packages in `ocular-bundle` (#56)
