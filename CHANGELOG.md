@@ -1,3 +1,7 @@
+## v2.0.0-beta.1
+
+- fix: Add compilerOptions: {paths: {}} (#57)
+
 ## v2.0.0-alpha.9
 
 - chore: use trusted publishing
