@@ -7,6 +7,8 @@ const testCases = [
   {
     title: 'drop GL import',
     input: `\
+import {GL} from '@luma.gl/webgl/constants';
+
 device.setParametersWebGL({
   blendFunc: [GL.ONE, GL.ONE_MINUS_DST_COLOR, GL.SRC_ALPHA, GL.DST_ALPHA]
 });
@@ -15,6 +17,60 @@ device.setParametersWebGL({
 device.setParametersWebGL({
   blendFunc: [1, 775, 770, 772]
 });
+export {};
+`
+  },
+  {
+    title: 'retain other named imports',
+    input: `\
+import {GL, OTHER_CONSTANT} from '@luma.gl/webgl/constants';
+
+console.log(GL.TRIANGLES, OTHER_CONSTANT);
+`,
+    output: `\
+import { OTHER_CONSTANT } from '@luma.gl/webgl/constants';
+console.log(4, OTHER_CONSTANT);
+`
+  },
+  {
+    title: 'retain GL import for dynamic access',
+    input: `\
+import {GL} from '@luma.gl/webgl/constants';
+
+const name = 'TRIANGLES';
+console.log(GL[name]);
+`,
+    output: `\
+import { GL } from '@luma.gl/webgl/constants';
+const name = 'TRIANGLES';
+console.log(GL[name]);
+`
+  },
+  {
+    title: 'retain GL import for direct access',
+    input: `\
+import {GL} from '@luma.gl/webgl/constants';
+
+console.log(GL);
+`,
+    output: `\
+import { GL } from '@luma.gl/webgl/constants';
+console.log(GL);
+`
+  },
+  {
+    title: 'drop GL import when remaining references are types',
+    input: `\
+import {GL, GLPrimitiveTopology, type GLTextureTarget} from '@luma.gl/webgl/constants';
+
+export function getTriangleMode(topology: GLPrimitiveTopology): GLTextureTarget | GL.TRIANGLES {
+  return GL.TRIANGLES;
+}
+`,
+    output: `\
+export function getTriangleMode(topology) {
+  return 4;
+}
 `
   },
   {
