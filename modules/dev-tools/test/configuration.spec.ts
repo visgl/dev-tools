@@ -1,9 +1,14 @@
 import {expect, test} from 'vitest';
 import type {TestProjectInlineConfiguration} from 'vitest/config';
 import {getOcularConfig, getVitestConfig} from '@vis.gl/dev-tools';
-import {getBundleConfig, parseBundleArguments} from '../src/configuration/get-esbuild-config.js';
+import {
+  getBundleConfig,
+  getCJSExportConfig,
+  parseBundleArguments
+} from '../src/configuration/get-esbuild-config.js';
 import {execFileSync} from 'node:child_process';
-import {mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {build} from 'esbuild';
+import {mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -117,6 +122,55 @@ test('dev-tools#getBundleConfig passes normalized externals to esbuild', async (
   expect(config.sourcesContent).toBe(false);
   expect(config.alias).not.toHaveProperty('@vis.gl/dev-tools');
   expect(config.alias).not.toHaveProperty('@vis.gl/dev-tools/test');
+});
+
+test('dev-tools#getCJSExportConfig neutralizes tsconfig paths', async () => {
+  const config = await getCJSExportConfig({
+    input: './dist/index.js',
+    output: './dist/index.cjs'
+  });
+
+  expect(config.packages).toBe('external');
+  expect(config.tsconfigRaw).toEqual({compilerOptions: {paths: {}}});
+});
+
+test('dev-tools#getCJSExportConfig keeps workspace packages out of the bundle', async () => {
+  const fixtureDirectory = mkdtempSync(path.join(tmpdir(), 'ocular-cjs-'));
+
+  try {
+    // A monorepo that maps its own scope to sibling sources, as vis.gl repos do.
+    writeFileSync(
+      path.join(fixtureDirectory, 'tsconfig.json'),
+      JSON.stringify({
+        compilerOptions: {
+          moduleResolution: 'bundler',
+          paths: {'@example/sibling': ['./sibling/src/index.js']}
+        }
+      })
+    );
+    mkdirSync(path.join(fixtureDirectory, 'sibling', 'src'), {recursive: true});
+    writeFileSync(
+      path.join(fixtureDirectory, 'sibling', 'src', 'index.js'),
+      "export const sibling = 'incorrectly bundled';\n"
+    );
+    mkdirSync(path.join(fixtureDirectory, 'dist'), {recursive: true});
+    writeFileSync(
+      path.join(fixtureDirectory, 'dist', 'index.js'),
+      "import {sibling} from '@example/sibling';\nexport const value = sibling;\n"
+    );
+
+    const config = await getCJSExportConfig({
+      input: path.join(fixtureDirectory, 'dist', 'index.js'),
+      output: path.join(fixtureDirectory, 'dist', 'index.cjs')
+    });
+    await build({...config, logLevel: 'silent'});
+
+    const output = readFileSync(path.join(fixtureDirectory, 'dist', 'index.cjs'), 'utf8');
+    expect(output).toContain('require("@example/sibling")');
+    expect(output).not.toContain('incorrectly bundled');
+  } finally {
+    rmSync(fixtureDirectory, {recursive: true, force: true});
+  }
 });
 
 test('ocular-bundle CLI bundles the requested entry point', () => {

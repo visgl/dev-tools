@@ -109,6 +109,7 @@ export async function getCJSExportConfig(opts: {
     // Node 16 is out of support, kept for compatibility. Move to 18?
     target: 'node16',
     packages: 'external',
+    tsconfigRaw: {compilerOptions: {paths: {}}},
     sourcemap: true,
     sourcesContent: false,
     logLevel: 'info'
@@ -252,7 +253,13 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
     };
 
     // biome-ignore lint/suspicious/noConsole: Debug mode intentionally prints the resolved config.
-    console.log(util.inspect(printableConfig, {showHidden: false, depth: null, colors: true}));
+    console.log(
+      util.inspect(printableConfig, {
+        showHidden: false,
+        depth: null,
+        colors: true
+      })
+    );
   }
 
   return config;
