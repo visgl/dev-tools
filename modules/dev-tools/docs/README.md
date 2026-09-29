@@ -107,6 +107,17 @@ extend the shared vis.gl defaults and add repository-specific file selection and
 When no project configuration exists, `ocular-lint` uses the packaged defaults directly.
 #### vite
 
+The shared test configuration targets Vitest 5. Install its peers explicitly, including Vite
+(Vitest 5 no longer installs Vite as a dependency):
+
+```bash
+yarn add --dev vitest@^5.0.2 @vitest/coverage-v8@^5.0.2 vite@^8.0.0 playwright
+```
+
+The coverage package is optional when coverage is not used. Keep Vitest, its browser provider,
+and coverage provider on matching versions. Vite 6.4, 7, and 8 are supported. The existing
+dev-tools Node requirement (22.15+, 24, or 26) satisfies Vitest 5's runtime requirement.
+
 Create `vitest.config.ts` at the repository root and call `getVitestConfig()` for shared Node,
 headed-browser, and headless-browser projects. Node-only tests use `*.node.spec.ts`; browser tests
 use `*.browser.spec.ts`.

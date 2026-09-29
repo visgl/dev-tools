@@ -44,8 +44,8 @@
   },
   "dependencies": {
     "@biomejs/biome": "^2.4.8",
-    "@vitest/browser": "^4.0.18",
-    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/browser": "^5.0.2",
+    "@vitest/browser-playwright": "^5.0.2",
     "deepmerge": "^4.2.2",
     "esbuild": "^0.28.1",
     "esbuild-plugin-external-global": "^1.0.1",
@@ -59,9 +59,10 @@
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/coverage-v8": "^5.0.2",
     "playwright": "^1.58.0",
-    "vitest": "^4.0.18"
+    "vite": "^6.4.0 || ^7.0.0 || ^8.0.0",
+    "vitest": "^5.0.2"
   },
   "peerDependenciesMeta": {
     "@vitest/coverage-v8": {
