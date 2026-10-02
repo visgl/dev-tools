@@ -1,6 +1,6 @@
 # What's New
 
-`ocular-dev-tools` release details are available in the [CHANGELOG](https://github.com/uber-web/ocular/blob/master/modules/dev-tools/CHANGELOG.md)
+`@vis.gl/dev-tools` release details are available in the [CHANGELOG](https://github.com/visgl/dev-tools/blob/master/CHANGELOG.md)
 
 ### v1.0.0 (alpha)
 
@@ -49,6 +49,6 @@ information in vscode etc.
 
 ### v0.3.0
 
-Some release details are available in the [CHANGELOG](https://github.com/uber-web/ocular/blob/master/modules/dev-tools/CHANGELOG.md)
+Some release details are available in the [CHANGELOG](https://github.com/visgl/dev-tools/blob/master/CHANGELOG.md)
 
 - `ocular-test node-debug` - New mode - starts node debugger
