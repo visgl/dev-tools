@@ -14,7 +14,7 @@ ocular-lint [mode]
 
 ## Configuration
 
-[Configurations](#ocular-dev-tools-1): `lint`
+[Configuration](#configuration): `lint`
 
 `ocular-lint` loads `biome.json` or `biome.jsonc` from the project root. If neither exists, it
 uses the configuration shipped by `@vis.gl/dev-tools`.
