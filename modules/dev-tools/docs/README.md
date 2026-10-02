@@ -1,3 +1,7 @@
+---
+slug: /
+---
+
 # @vis.gl/dev-tools
 
 Dev tools for vis.gl open source Javascript frameworks

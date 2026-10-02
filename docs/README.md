@@ -1,3 +1,7 @@
+---
+slug: /
+---
+
 # vis.gl development tools
 
 Shared development tools for building, testing, linting, bundling, and publishing vis.gl's open source JavaScript frameworks.

@@ -10,7 +10,7 @@
   "scripts": {
     "bootstrap": "ocular-bootstrap && npm run build",
     "build": "ocular-clean && yarn workspace @vis.gl/dev-tools exec tspc -b tsconfig.json && ocular-build",
-    "website:build": "yarn workspace project-website build",
+    "website:build": "yarn build && yarn workspace project-website build",
     "cover": "ocular-test node --coverage",
     "lint": "ocular-lint",
     "test": "ocular-test node headless",
