@@ -1,6 +1,6 @@
 node_modules/
 dist/
-
+.yarn/install-state.gz
 .idea/
 .nx/
 yarn-error.log
@@ -20,3 +20,4 @@ modules/dev-tools/.alias.json
 coverage/
 .nyc_output/
 tsconfig.tsbuildinfo
+.vitest/

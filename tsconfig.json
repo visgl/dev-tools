@@ -8,12 +8,19 @@
     "allowJs": true,
     "checkJs": false,
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
+    "types": ["node"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "useDefineForClassFields": false,
     "baseUrl": ".",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@vis.gl/dev-tools": ["modules/dev-tools/src"],
+      "@vis.gl/ts-plugins": ["modules/ts-plugins/src"],
+      "@vis.gl/docusaurus-website": ["modules/docusaurus-website/src"]
+    }
   },
   "include": [
     "modules",
@@ -22,10 +29,5 @@
   "exclude":[
     "**/node_modules",
     "**/dist"
-  ],
-  "paths": {
-    "@vis.gl/dev-tools": ["modules/dev-tools/src"],
-    "@vis.gl/ts-plugins": ["modules/ts-plugins/src"],
-    "@vis.gl/docusaurus-website": ["modules/docusaurus-website/src"]
-  }
+  ]
 }

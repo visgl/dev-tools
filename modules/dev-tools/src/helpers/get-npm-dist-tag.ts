@@ -74,7 +74,7 @@ function getPublishedVersion(packageName: string, distTag: string): string | nul
       stdio: [null, 'pipe', null],
       encoding: 'utf-8'
     }).trim();
-  } catch (err) {
+  } catch {
     // not found
     return null;
   }

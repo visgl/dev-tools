@@ -1,24 +1,18 @@
 {
-  "name": "ocular-website",
+  "name": "project-website",
   "version": "1.0.0",
-  "description": "Website for the vis.gl open source documentation system",
-  "main": "index.js",
-  "author": "",
-  "license": "MIT",
+  "description": "Documentation website for vis.gl dev-tools",
   "scripts": {
-    "start": "yarn clean && yarn develop",
-    "clean": "rm -rf ./.cache ./public",
-    "develop": "yarn clean && gatsby develop --port=8002",
-    "build": "yarn clean && gatsby build --prefix-paths",
-    "serve": "gatsby serve --prefix-paths",
-    "deploy": "NODE_DEBUG=gh-pages gh-pages -d public"
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve"
   },
-  "dep_comment": "Ensure gatsby-theme-ocular references unpublished version to trigger local workspaces link",
   "dependencies": {
-    "gatsby": "^2.18.0",
-    "gatsby-theme-ocular": "^1.2.4",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "sharp": "^0.31.1"
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/plugin-client-redirects": "^3.10.2",
+    "@vis.gl/docusaurus-website": "workspace:*",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   }
 }

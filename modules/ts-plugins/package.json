@@ -2,7 +2,7 @@
   "name": "@vis.gl/ts-plugins",
   "description": "TypeScript plugins for vis.gl frameworks",
   "license": "MIT",
-  "version": "1.0.2",
+  "version": "2.0.0-beta.1",
   "type": "module",
   "publishConfig": {
     "access": "public"
@@ -39,18 +39,21 @@
     "./ts-transform-inline-webgl-constants": {
       "require": "./dist/ts-transform-inline-webgl-constants/index.cjs",
       "import": "./dist/ts-transform-inline-webgl-constants/index.js"
+    },
+    "./ts-transform-webgpu": {
+      "require": "./dist/ts-transform-webgpu/index.cjs",
+      "import": "./dist/ts-transform-webgpu/index.js"
     }
   },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
-  "scripts": {},
   "dependencies": {
     "@luma.gl/constants": "^9.0.0",
     "minimatch": "^3.0.0",
-    "ts-patch": "^3.1.2",
-    "typescript": "^5.2.2"
+    "ts-patch": "^4.0.1",
+    "typescript": "^6.0.3"
   },
   "engines": {
-    "node": ">= 20"
+    "node": ">= 22.15"
   }
 }

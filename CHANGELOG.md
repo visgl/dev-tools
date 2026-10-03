@@ -1,3 +1,50 @@
+## v2.0.0-beta.1
+
+- fix: Add compilerOptions: {paths: {}} (#57)
+
+## v2.0.0-alpha.9
+
+- chore: use trusted publishing
+
+## v2.0.0-alpha.8
+
+- fix(dev-tools): preserve external workspace packages in `ocular-bundle` (#56)
+
+## v2.0.0-alpha.7
+
+- fix(dev-tools): parse `ocular-bundle` entry points, targets and externals correctly (#52)
+
+## v2.0.0-alpha.6
+
+- fix(docusaurus-website): future flags
+
+## v2.0.0-alpha.5
+
+- feat(docusaurus-website): bump docusaurus to latest
+
+## v2.0.0-alpha.4
+
+- feat(dev-tools): update to Typescript 6 (#50)
+- fix(dev-tools): move coverage dependency to optional peer
+- fix(dev-tools): bootstrap bin linking for yarn 4
+
+## v2.0.0-alpha.3
+
+- fix(dev-tools): make vitest a peer dependency (#48)
+
+## v2.0.0-alpha.2
+
+- fix(dev-tools): various bug fixes (#47)
+
+## v2.0.0-alpha.1
+
+- feat(dev-tools): Migrate tape to vitest (#44)
+- feat(dev-tools): Replace eslint with biome (#42)
+
+## v1.0.3
+
+-  feat(ts-plugins): Add webgpu transform (#40)
+
 ## v1.0.2
 
 - fix(dev-tools): default cjs output path

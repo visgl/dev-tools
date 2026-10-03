@@ -72,7 +72,7 @@ function getRepoName(): string | null {
   if (!repoUrl || !repoUrl.includes('github.com')) {
     return null;
   }
-  const m = repoUrl.match(/([\w\.\-]+\/[\w\.\-]+?)(.git)?$/);
+  const m = repoUrl.match(/([\w.-]+\/[\w.-]+?)(.git)?$/);
   return m?.[1] ?? null;
 }
 
@@ -82,7 +82,7 @@ function getGitTag(): string | null {
       stdio: [null, 'pipe', null],
       encoding: 'utf-8'
     }).trim();
-  } catch (err) {
+  } catch {
     // not tagged
     return null;
   }

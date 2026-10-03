@@ -12,28 +12,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version-file: '.nvmrc'
-          cache: 'yarn'
+          package-manager-cache: false
 
-      - name: Enable corepack
-        run: corepack enable yarn
+      - name: Enable pinned Yarn
+        run: |
+          corepack enable
+          corepack install
+          yarn --version
+
+      - name: Cache Yarn Berry artifacts
+        uses: actions/cache@v4
+        with:
+          path: ~/.yarn/berry/cache
+          key: ${{ runner.os }}-yarn4-${{ hashFiles('yarn.lock', '.yarnrc.yml', 'package.json') }}
+
+      - name: Install dependencies
+        run: yarn install --immutable
 
       - name: Bootstrap
         run: |
           yarn bootstrap
 
+      - name: Install browser
+        run: |
+          yarn playwright install --with-deps chromium
+
       - name: Run tests
         run: |
           npm run lint
+          npm run test
+          npm run test-headless
           npm run cover
 
       - name: Coveralls
-        uses: coverallsapp/github-action@v2
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: ${{ github.workspace }}/coverage/lcov.info
+          file: coverage/lcov.info

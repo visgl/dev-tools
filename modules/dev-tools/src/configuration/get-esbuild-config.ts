@@ -36,6 +36,35 @@ function getExternalGlobalsIIFE(externalPackages: string[], mapping: Record<stri
   return externals;
 }
 
+/**
+ * Removes workspace aliases that would otherwise take precedence over esbuild externals.
+ * @param aliases Ocular aliases resolved for the current monorepo.
+ * @param externalPackages Package names that must remain external to the bundle.
+ */
+function removeExternalAliases(
+  aliases: Record<string, string>,
+  externalPackages: string[]
+): Record<string, string> {
+  const filteredAliases = {...aliases};
+
+  for (const externalPackage of externalPackages) {
+    const packageName = externalPackage.endsWith('/*')
+      ? externalPackage.slice(0, -2)
+      : externalPackage;
+    if (packageName.includes('*')) {
+      continue;
+    }
+
+    for (const alias of Object.keys(filteredAliases)) {
+      if (alias === packageName || alias.startsWith(`${packageName}/`)) {
+        delete filteredAliases[alias];
+      }
+    }
+  }
+
+  return filteredAliases;
+}
+
 // esbuild does not support umd format
 // Work around from https://github.com/evanw/esbuild/issues/819
 // Template: https://webpack.js.org/configuration/output/#type-umd
@@ -80,25 +109,56 @@ export async function getCJSExportConfig(opts: {
     // Node 16 is out of support, kept for compatibility. Move to 18?
     target: 'node16',
     packages: 'external',
+    tsconfigRaw: {compilerOptions: {paths: {}}},
     sourcemap: true,
+    sourcesContent: false,
     logLevel: 'info'
   };
 }
 
-type BundleOptions = {
+export type BundleOptions = {
   input: string;
   env?: 'dev' | 'prod';
   output?: string;
   format?: 'iife' | 'cjs' | 'esm' | 'umd';
   target?: string[];
-  externals?: string[];
+  externals?: string | string[];
   globalName?: string;
   globals?: {[pattern: string]: string};
   debug?: boolean;
   sourcemap?: boolean;
+  sourcesContent?: boolean;
+  watch?: boolean;
 };
 
-/* eslint-disable max-statements,complexity */
+/** Parses command-line arguments accepted by `ocular-bundle`. */
+export function parseBundleArguments(arguments_: string[]): BundleOptions {
+  const options: Record<string, string | string[] | boolean | undefined> = {};
+
+  for (const argument of arguments_) {
+    if (argument.startsWith('--')) {
+      const [key, ...valueParts] = argument.slice(2).split('=');
+      const value = valueParts.length > 0 ? valueParts.join('=') : true;
+
+      if (key === 'externals' || key === 'target') {
+        options[key] = typeof value === 'string' ? value.split(',').filter(Boolean) : [];
+      } else if (value === 'true' || value === 'false') {
+        options[key] = value === 'true';
+      } else {
+        options[key] = value;
+      }
+    } else if (!options.input && argument.match(/\.(js|ts|cjs|mjs|jsx|tsx)$/)) {
+      options.input = argument;
+    }
+  }
+
+  if (!options.input) {
+    throw new Error('ocular-bundle requires a JavaScript or TypeScript entry point');
+  }
+
+  return options as unknown as BundleOptions;
+}
+
 /** Returns esbuild config for building standalone bundles */
 export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions> {
   // This script must be executed in a submodule's directory
@@ -125,15 +185,15 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
     externals,
     globalName,
     debug,
-    sourcemap = false
+    sourcemap = false,
+    sourcesContent = true
   } = opts;
 
-  let externalPackages = Object.keys(packageInfo.peerDependencies || {});
-  if (typeof externals === 'string') {
-    externalPackages = externalPackages.concat((externals as string).split(','));
-  } else if (Array.isArray(externals)) {
-    externalPackages = externalPackages.concat(externals);
-  }
+  const normalizedExternals =
+    typeof externals === 'string' ? externals.split(',').filter(Boolean) : externals || [];
+  const externalPackages = Object.keys(packageInfo.peerDependencies || {}).concat(
+    normalizedExternals
+  );
 
   const config: BuildOptions = {
     entryPoints: [input],
@@ -142,25 +202,26 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
     // @ts-expect-error umd is not supported by esbuild, will be overwritten below
     format,
     minify: !devMode,
-    alias: ocularConfig.aliases,
+    alias: removeExternalAliases(ocularConfig.aliases, externalPackages),
     platform: 'browser',
     target,
     logLevel: 'info',
     sourcemap,
+    sourcesContent,
     plugins: []
   };
   if (globalName) {
     config.globalName = globalName;
   }
 
-  let externalGlobals;
+  let externalGlobals: Record<string, string> | undefined;
   switch (format) {
     case 'cjs':
     case 'esm':
       // Use esbuild's built-in external functionality
       config.packages = 'external';
-      if (externals) {
-        config.external = externals;
+      if (normalizedExternals.length > 0) {
+        config.external = normalizedExternals;
       }
       break;
 
@@ -191,7 +252,14 @@ export async function getBundleConfig(opts: BundleOptions): Promise<BuildOptions
       })
     };
 
-    console.log(util.inspect(printableConfig, {showHidden: false, depth: null, colors: true}));
+    // biome-ignore lint/suspicious/noConsole: Debug mode intentionally prints the resolved config.
+    console.log(
+      util.inspect(printableConfig, {
+        showHidden: false,
+        depth: null,
+        colors: true
+      })
+    );
   }
 
   return config;

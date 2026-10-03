@@ -4,7 +4,7 @@
    Example:
    $ node get-config.js ".babel.configPath"
  */
-import {getOcularConfig, MaterializedOcularConfig} from './get-ocular-config.js';
+import {getOcularConfig, type MaterializedOcularConfig} from './get-ocular-config.js';
 
 let ocularConfig: MaterializedOcularConfig;
 try {

@@ -28,7 +28,7 @@
 import fs from 'fs/promises';
 
 /** Should match if the line is a header */
-const headerTest = /^(#+)\s+(?<headerContent>.*?)\s*(?<customId>\{#[\w\-]+\})?$/;
+const headerTest = /^(#+)\s+(?<headerContent>.*?)\s*(?<customId>\{#[\w-]+\})?$/;
 /** Should match if the header describes an API */
 const apiTest = /^`((?<code>\w+)[^`]*)`\s*(\(.*?\)|$)/;
 
