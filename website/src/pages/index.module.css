@@ -1,0 +1,131 @@
+.hero {
+  background:
+    radial-gradient(circle at 80% 20%, rgb(0 173 230 / 30%), transparent 32%),
+    linear-gradient(120deg, var(--ifm-color-gray-900), #1a5069);
+  color: var(--ifm-color-white);
+  padding: 7rem 0 8rem;
+}
+
+.heroContent {
+  max-width: 52rem;
+}
+
+.hero h1 {
+  color: inherit;
+  font-size: clamp(3.5rem, 10vw, 7rem);
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+  margin: 0 0 1.5rem;
+}
+
+.eyebrow {
+  color: var(--ifm-color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  margin-bottom: 1rem;
+}
+
+.hero .eyebrow {
+  color: #8ee5ff;
+}
+
+.tagline {
+  color: var(--ifm-color-gray-200);
+  font-size: 1.35rem;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 42rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.actions :global(.button--secondary) {
+  background: transparent;
+  border-color: var(--ifm-color-gray-300);
+  color: var(--ifm-color-white);
+}
+
+.section {
+  padding: 6rem 0;
+}
+
+.sectionMuted {
+  background: var(--ifm-color-gray-200);
+}
+
+.sectionIntro {
+  margin: 0 auto 3rem;
+  max-width: 42rem;
+  text-align: center;
+}
+
+.sectionIntro h2 {
+  font-size: 2.25rem;
+  margin-bottom: 1rem;
+}
+
+.sectionIntro p:last-child {
+  color: var(--ifm-color-gray-700);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.card,
+.packageCard {
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-gray-300);
+  border-radius: 0.5rem;
+  color: var(--ifm-font-color-base);
+  height: 100%;
+  padding: 1.75rem;
+}
+
+.card {
+  border-top: 3px solid var(--ifm-color-primary);
+}
+
+.cardNumber {
+  color: var(--ifm-color-primary);
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 2rem;
+}
+
+.card h3,
+.packageCard h3 {
+  color: var(--ifm-heading-color);
+  font-size: 1.3rem;
+  margin-bottom: 0.75rem;
+}
+
+.card p,
+.packageCard p {
+  color: var(--ifm-font-color-base);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.packageCard a {
+  display: inline-block;
+  font-weight: 600;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 996px) {
+  .hero {
+    padding: 5rem 0 6rem;
+  }
+
+  .card,
+  .packageCard {
+    margin-bottom: 1.5rem;
+  }
+}
