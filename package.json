@@ -27,7 +27,7 @@
   "pre-push": "pre-push",
   "dependencies": {},
   "volta": {
-    "node": "18.19.0",
+    "node": "22.23.4",
     "yarn": "1.22.19"
   }
 }
