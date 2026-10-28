@@ -35,7 +35,7 @@ The version modes push the release branch and then only the tags on the version 
 `from-git` is safe to run again for the same tag:
 
 - If the GitHub release for the tag already exists, it's left as is.
-- In a monorepo, `lerna publish from-package` only publishes versions that aren't on npm yet. A failed attempt is retried automatically, 3 attempts by default, 120 seconds apart. Set `OCULAR_PUBLISH_ATTEMPTS` and `OCULAR_PUBLISH_RETRY_DELAY` to change this.
+- In a monorepo, `lerna publish from-package` only publishes versions that aren't on npm yet. A failed attempt is retried automatically, up to 3 attempts, 120 seconds apart.
 - A single package is skipped if its version is already on npm.
 
 In the release workflow, use **Re-run failed jobs** to finish a publish that failed partway.

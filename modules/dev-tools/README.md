@@ -403,7 +403,7 @@ reviewed release checkout.
 
 Version modes push only the tags on the version commit. `from-git` can be re-run for the same tag:
 it keeps an existing GitHub release, publishes only versions missing from npm, and retries failed
-lerna publishes (`OCULAR_PUBLISH_ATTEMPTS`, default 3; `OCULAR_PUBLISH_RETRY_DELAY`, default 120s).
+lerna publishes (up to 3 attempts, 120 seconds apart).
 
 ## ESM repositories
 
