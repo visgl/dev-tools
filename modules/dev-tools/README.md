@@ -401,6 +401,10 @@ GitHub release when possible and selects the npm dist-tag from the package versi
 changes package versions, Git commits/tags, remote branches, and npm state; run it only from a
 reviewed release checkout.
 
+Version modes push only the tags on the version commit. `from-git` can be re-run for the same tag:
+it keeps an existing GitHub release, publishes only versions missing from npm, and retries failed
+lerna publishes (`OCULAR_PUBLISH_ATTEMPTS`, default 3; `OCULAR_PUBLISH_RETRY_DELAY`, default 120s).
+
 ## ESM repositories
 
 For native ESM:

@@ -11,6 +11,10 @@ usage() {
 # beta, prod, version-only-beta, version-only-prod or from-git
 MODE=$1
 DEV_TOOLS_DIR=$(dirname $0)/..
+# Newly published versions can take a few minutes to show up on the registry. Retrying sooner
+# can fail with "cannot publish over the previously published versions".
+PUBLISH_ATTEMPTS=${OCULAR_PUBLISH_ATTEMPTS:-3}
+PUBLISH_RETRY_DELAY=${OCULAR_PUBLISH_RETRY_DELAY:-120}
 
 print_red() {
   echo -e "\033[31m${1}\033[0m"
@@ -52,8 +56,12 @@ bumpVersion() {
      exit 1
   fi
 
-  # push to branch
-  (set -x; git push --no-verify && git push --tags --no-verify)
+  # Push the branch, then only the tags on the version commit. `git push --tags` would also
+  # push any stray local tags, and GitHub skips tag workflows when more than 3 tags are
+  # pushed at once, so the release workflow would never run.
+  local remote=`git config "branch.$(git branch --show-current).remote" || echo origin`
+  local tags=`git tag --points-at HEAD | sed 's#^#refs/tags/#'`
+  (set -x; git push --no-verify && git push --no-verify $remote $tags)
 }
 
 publishToNPM() {
@@ -62,9 +70,26 @@ publishToNPM() {
 
   local tag=`node $DEV_TOOLS_DIR/dist/helpers/get-npm-dist-tag.js`
   if [ -d "modules" ]; then
-    (set -x; npx lerna publish from-package --force-publish --yes --dist-tag $tag --no-commit-hooks)
+    # `from-package` skips versions already on npm, so retrying only publishes the packages
+    # that failed, e.g. on npm's intermittent provenance TLOG_CREATE_ENTRY_ERROR (409)
+    local attempt=1
+    until (set -x; npx lerna publish from-package --force-publish --yes --dist-tag $tag --no-commit-hooks); do
+      if [ $attempt -ge $PUBLISH_ATTEMPTS ]; then
+        print_red "\nerror: some packages failed to publish after $attempt attempts. Run \`ocular-publish from-git\` again to publish the rest.\n"
+        exit 1
+      fi
+      attempt=$((attempt + 1))
+      print_red "\nSome packages failed to publish. Retrying in ${PUBLISH_RETRY_DELAY}s (attempt $attempt of $PUBLISH_ATTEMPTS)\n"
+      sleep $PUBLISH_RETRY_DELAY
+    done
   else
-    (set -x; npm publish --tag $tag)
+    local name=`node -p "require('./package.json').name"`
+    local version=`node -p "require('./package.json').version"`
+    if [ -n "`npm view "$name@$version" version 2>/dev/null`" ]; then
+      echo "$name@$version is already published"
+    else
+      (set -x; npm publish --tag $tag)
+    fi
   fi
 }
 
