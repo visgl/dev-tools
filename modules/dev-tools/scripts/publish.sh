@@ -52,10 +52,11 @@ bumpVersion() {
      exit 1
   fi
 
-  # Push the branch, then only the tags on the version commit. `git push --tags` would also
-  # push any stray local tags, and GitHub skips tag workflows when more than 3 tags are
-  # pushed at once, so the release workflow would never run.
-  local remote=`git config "branch.$(git branch --show-current).remote" || echo origin`
+  # Push the branch, then only the tags on the version commit, to the same remote that `git push`
+  # picks for the branch. `git push --tags` would also push any stray local tags, and GitHub skips
+  # tag workflows when more than 3 tags are pushed at once, so the release workflow would never run.
+  local branch=`git branch --show-current`
+  local remote=`git config "branch.$branch.pushRemote" || git config remote.pushDefault || git config "branch.$branch.remote" || echo origin`
   local tags=`git tag --points-at HEAD | sed 's#^#refs/tags/#'`
   (set -x; git push --no-verify && git push --no-verify $remote $tags)
 }
@@ -85,7 +86,9 @@ publishToNPM() {
   else
     local name=`node -p "require('./package.json').name"`
     local version=`node -p "require('./package.json').version"`
-    if [ -n "`npm view "$name@$version" version 2>/dev/null`" ]; then
+    # Check the registry that `npm publish` uses
+    local registry=`node -p "require('./package.json').publishConfig?.registry || ''"`
+    if [ -n "`npm view "$name@$version" version ${registry:+--registry "$registry"} 2>/dev/null`" ]; then
       echo "$name@$version is already published"
     else
       (set -x; npm publish --tag $tag)
