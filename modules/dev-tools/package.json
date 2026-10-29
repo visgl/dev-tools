@@ -43,6 +43,7 @@
     "ocular-test": "./scripts/test.js"
   },
   "dependencies": {
+    "@ampproject/remapping": "^2.3.0",
     "@biomejs/biome": "^2.4.8",
     "@vitest/browser": "^5.0.2",
     "@vitest/browser-playwright": "^5.0.2",
@@ -51,6 +52,7 @@
     "esbuild-plugin-external-global": "^1.0.1",
     "glob": "^7.1.4",
     "lerna": "^10.0.0",
+    "magic-string": "^0.30.21",
     "minimatch": "^3.0.0",
     "semver": "^7.6.0",
     "ts-node": "~10.9.0",

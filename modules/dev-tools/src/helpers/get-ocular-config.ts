@@ -23,6 +23,8 @@ export type OcularConfig = {
 
   typescript?: {
     project: string;
+    /** Use the consuming project's TypeScript 7 compiler and standalone output transforms. */
+    compiler?: 'patched' | 'native';
   };
 
   lint?: {
@@ -53,6 +55,8 @@ export type MaterializedOcularConfig = {
 
   typescript: {
     project: string;
+    /** Use the consuming project's TypeScript 7 compiler and standalone output transforms. */
+    compiler?: 'patched' | 'native';
   };
 
   lint: {
