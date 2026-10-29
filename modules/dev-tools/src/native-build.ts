@@ -128,7 +128,12 @@ export function transformOutput(
             ts.isStringLiteral(property)) &&
           Object.hasOwn(constants, property.text)
         ) {
-          output.overwrite(node.getStart(tree), node.end, String(constants[property.text]));
+          const value = String(constants[property.text]);
+          const replacement =
+            ts.isPropertyAccessExpression(node.parent) && node.parent.expression === node
+              ? `(${value})`
+              : value;
+          output.overwrite(node.getStart(tree), node.end, replacement);
           return;
         }
       }
@@ -193,6 +198,19 @@ export async function nativeBuild(project: string) {
     throw new Error(ts.flattenDiagnosticMessageText(config.error.messageText, '\n'));
   const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, path.dirname(configPath));
   const plugins = (parsed.options.plugins ?? []) as Plugin[];
+  if (parsed.options.outFile)
+    throw new Error('Native builds do not support outFile; emit separate modules instead');
+  // Match the CLI overrides while retaining the actual input-to-output association.
+  // Debugger sourceRoot URLs are not local filesystem paths.
+  Object.assign(parsed.options, {
+    configFilePath: configPath,
+    outDir: path.resolve('dist'),
+    declaration: true,
+    declarationMap: true,
+    sourceMap: true,
+    incremental: false,
+    composite: false
+  });
   const supported = new Set([
     'ts-transform-version-inline',
     'ts-transform-inline-webgl-constants',
@@ -242,22 +260,47 @@ export async function nativeBuild(project: string) {
       '--incremental',
       'false',
       '--composite',
-      'false'
+      'false',
+      '--listEmittedFiles',
+      '--listFiles'
     ],
-    {stdio: 'inherit'}
+    {stdio: ['inherit', 'pipe', 'inherit'], encoding: 'utf8', maxBuffer: 64 * 1024 * 1024}
   );
+  const lines = (result.stdout ?? '').split(/\r?\n/);
+  const inputs = lines.filter((line) => path.isAbsolute(line) && fs.existsSync(line));
+  const inputSet = new Set(inputs);
+  const diagnostics = lines
+    .filter((line) => !line.startsWith('TSFILE: ') && !inputSet.has(line))
+    .join('\n');
+  if (diagnostics.trim()) process.stdout.write(diagnostics);
   if (result.error) throw result.error;
   if (result.status !== 0) throw new Error(`TypeScript exited with status ${result.status}`);
-  for (const fileName of walk(path.resolve('dist'))) {
-    if (!/\.(?:[cm]?js|d\.[cm]?ts)$/.test(fileName)) continue;
+  // Include imported inputs even when tsconfig lists only a single entry file.
+  parsed.fileNames = inputs;
+  const sourcesByOutput = new Map<string, string>();
+  for (const sourceFileName of parsed.fileNames) {
+    for (const outputFileName of ts.getOutputFileNames(
+      parsed,
+      sourceFileName,
+      !ts.sys.useCaseSensitiveFileNames
+    )) {
+      sourcesByOutput.set(path.resolve(outputFileName), sourceFileName);
+    }
+  }
+  const emittedFiles = result.stdout
+    .split(/\r?\n/)
+    .filter((line) => line.startsWith('TSFILE: '))
+    .map((line) => path.resolve(line.slice('TSFILE: '.length)));
+  for (const fileName of emittedFiles) {
+    if (!/\.(?:[cm]?js|jsx|d\.[cm]?ts)$/.test(fileName)) continue;
     const original = fs.readFileSync(fileName, 'utf8');
     const mapPath = `${fileName}.map`;
     const previous = fs.existsSync(mapPath)
       ? JSON.parse(fs.readFileSync(mapPath, 'utf8'))
       : undefined;
-    const sourceFileName = previous?.sources?.[0]
-      ? path.resolve(path.dirname(mapPath), previous.sourceRoot ?? '', previous.sources[0])
-      : fileName;
+    const sourceFileName = sourcesByOutput.get(fileName);
+    if (!sourceFileName)
+      throw new Error(`Cannot identify the input source for emitted file ${fileName}`);
     const transformed = transformOutput(original, fileName, plugins, constants, sourceFileName);
     if (transformed.code === original) continue;
     if (previous) {
@@ -266,14 +309,6 @@ export async function nativeBuild(project: string) {
       fs.writeFileSync(mapPath, JSON.stringify(combined));
     }
     fs.writeFileSync(fileName, transformed.code);
-  }
-}
-
-function* walk(directory: string): Generator<string> {
-  for (const entry of fs.readdirSync(directory, {withFileTypes: true})) {
-    const fileName = path.join(directory, entry.name);
-    if (entry.isDirectory()) yield* walk(fileName);
-    else yield fileName;
   }
 }
 

@@ -66,6 +66,9 @@ transforms before generating CommonJS exports:
   untouched. The declaration pass requires `afterDeclarations: true`.
 
 Edits are composed with the compiler's JavaScript and declaration source maps.
+The compiler's emitted-file list determines which outputs are processed, including
+a separate `declarationDir`; source filenames come from compiler inputs, so
+debugger-only `sourceRoot` URLs do not affect version or shader transforms.
 Source files are never rewritten. Native builds currently re-emit the selected
 package in full, overriding `incremental` and `composite` for that invocation to
 avoid post-processing already transformed output on an incremental rebuild.
