@@ -1,3 +1,13 @@
+## v2.0.0-beta.2
+
+- fix(dev-tools): make publishing safe to retry after a partial publish (#71)
+- chore(dev-tools): upgrade shared test tooling to Vitest 5 (#59)
+- fix(ts-plugins): prune inlined WebGL constant imports (#43)
+- fix(docusaurus-website): guard against empty webpackConfig (#58)
+- feat: migrate documentation to Docusaurus and add the dev-tools homepage (#60, #61)
+- chore: update Node.js and Corepack CI configuration (#19, #67)
+- chore: update copyright attribution to OpenJS (#13)
+
 ## v2.0.0-beta.1
 
 - fix: Add compilerOptions: {paths: {}} (#57)
