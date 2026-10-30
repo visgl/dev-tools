@@ -62,6 +62,15 @@ bumpVersion() {
 }
 
 publishToNPM() {
+  # Failed Lerna publishes can leave rewritten manifests behind. Only publish from a clean
+  # tracked tree so restoring those manifests cannot discard pre-existing user changes.
+  if [ -d "modules" ]; then
+    if ! git diff --quiet || ! git diff --cached --quiet; then
+      print_red "\nerror: Working tree has uncommitted changes\n"
+      exit 1
+    fi
+  fi
+
   # Try add release to GitHub
   node $DEV_TOOLS_DIR/dist/github-release.js
 
@@ -75,6 +84,10 @@ publishToNPM() {
     local delay=120
     local attempt=1
     until (set -x; npx lerna publish from-package --force-publish --yes --dist-tag $tag --no-commit-hooks); do
+      # Lerna adds gitHead and rewrites workspace dependencies in package manifests. A failed
+      # publish can skip its cleanup, causing the next attempt to fail with EUNCOMMIT.
+      # Restore only tracked manifests, including on the final failure for manual reruns.
+      git restore --source=HEAD --worktree -- ':(glob)**/package.json'
       if [ $attempt -ge $attempts ]; then
         print_red "\nerror: some packages failed to publish after $attempt attempts. Run \`ocular-publish from-git\` again to publish the rest.\n"
         exit 1
