@@ -52,8 +52,13 @@ bumpVersion() {
      exit 1
   fi
 
-  # push to branch
-  (set -x; git push --no-verify && git push --tags --no-verify)
+  # Push the branch, then only the tags on the version commit, to the same remote that `git push`
+  # picks for the branch. `git push --tags` would also push any stray local tags, and GitHub skips
+  # tag workflows when more than 3 tags are pushed at once, so the release workflow would never run.
+  local branch=`git branch --show-current`
+  local remote=`git config "branch.$branch.pushRemote" || git config remote.pushDefault || git config "branch.$branch.remote" || echo origin`
+  local tags=`git tag --points-at HEAD | sed 's#^#refs/tags/#'`
+  (set -x; git push --no-verify && git push --no-verify $remote $tags)
 }
 
 publishToNPM() {
@@ -62,9 +67,32 @@ publishToNPM() {
 
   local tag=`node $DEV_TOOLS_DIR/dist/helpers/get-npm-dist-tag.js`
   if [ -d "modules" ]; then
-    (set -x; npx lerna publish from-package --force-publish --yes --dist-tag $tag --no-commit-hooks)
+    # `from-package` skips versions already on npm, so retrying only publishes the packages
+    # that failed, e.g. on npm's intermittent provenance TLOG_CREATE_ENTRY_ERROR (409).
+    # Wait between attempts: new versions can take a few minutes to show up on the registry, and
+    # retrying sooner can fail with "cannot publish over the previously published versions".
+    local attempts=3
+    local delay=120
+    local attempt=1
+    until (set -x; npx lerna publish from-package --force-publish --yes --dist-tag $tag --no-commit-hooks); do
+      if [ $attempt -ge $attempts ]; then
+        print_red "\nerror: some packages failed to publish after $attempt attempts. Run \`ocular-publish from-git\` again to publish the rest.\n"
+        exit 1
+      fi
+      attempt=$((attempt + 1))
+      print_red "\nSome packages failed to publish. Retrying in ${delay}s (attempt $attempt of $attempts)\n"
+      sleep $delay
+    done
   else
-    (set -x; npm publish --tag $tag)
+    local name=`node -p "require('./package.json').name"`
+    local version=`node -p "require('./package.json').version"`
+    # Check the registry that `npm publish` uses
+    local registry=`node -p "require('./package.json').publishConfig?.registry || ''"`
+    if [ -n "`npm view "$name@$version" version ${registry:+--registry "$registry"} 2>/dev/null`" ]; then
+      echo "$name@$version is already published"
+    else
+      (set -x; npm publish --tag $tag)
+    fi
   fi
 }
 
