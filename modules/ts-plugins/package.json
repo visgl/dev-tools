@@ -49,7 +49,7 @@
   "main": "./dist/index.js",
   "dependencies": {
     "@luma.gl/constants": "^9.0.0",
-    "minimatch": "^3.0.0",
+    "minimatch": "^11.0.1",
     "ts-patch": "^4.0.1",
     "typescript": "^6.0.3"
   },
