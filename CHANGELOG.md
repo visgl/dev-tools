@@ -1,3 +1,7 @@
+## v2.0.0-beta.3
+
+- fix(dev-tools): restore package manifests after failed publishes so retries can proceed (#75)
+
 ## v2.0.0-beta.2
 
 - fix(dev-tools): make publishing safe to retry after a partial publish (#71)
