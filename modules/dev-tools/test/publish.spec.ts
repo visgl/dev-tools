@@ -33,6 +33,8 @@ function setup() {
     'user.name=Test',
     '-c',
     'user.email=test@example.com',
+    '-c',
+    'commit.gpgsign=false',
     'commit',
     '--quiet',
     '-m',
