@@ -4,34 +4,29 @@ Build each package's ESM files and declarations, then its CommonJS exports.
 
 ## TypeScript 7
 
-Install TypeScript 7 in the consuming repository and select the native build in
-`.ocularrc.js`:
+Install TypeScript 7 in the consuming repository and select the native compiler
+in `.ocularrc.js`:
 
 ```js
 export default {
-  typescript: {
-    project: 'tsconfig.json',
-    compiler: 'native'
-  }
+  typescript: {project: 'tsconfig.json', compiler: 'native'}
 };
 ```
 
-The default remains `compiler: 'patched'`, using `tspc`. Native builds resolve the
-`typescript` executable from the consuming package, require version 7 or newer,
-and do not patch the native compiler. Dev-tools retains TypeScript 6 internally
-for configuration and syntax parsing; it does not use it to type-check or emit
-native builds.
+The default `compiler: 'patched'` uses `tspc`. Unknown compiler names fail.
+Native builds resolve TypeScript 7 from the consuming package. Dev-tools retains
+TypeScript 6 internally for configuration and output-path helpers, while checking
+and emission use the consumer's native compiler.
 
-Keep extensionless imports in your source and retain these existing `tsconfig.json`
-plugin entries:
+### Extensionless imports in any framework
+
+For a framework that only needs extensionless imports, keep the source unchanged
+and configure the two output passes in its tsconfig:
 
 ```json
 {
   "compilerOptions": {
     "plugins": [
-      {"transform": "@vis.gl/ts-plugins/ts-transform-version-inline"},
-      {"transform": "@vis.gl/ts-plugins/ts-transform-inline-webgl-constants"},
-      {"transform": "@vis.gl/ts-plugins/ts-transform-remove-glsl-comments"},
       {
         "transform": "@vis.gl/ts-plugins/ts-transform-append-extension",
         "extensions": [".js"],
@@ -47,36 +42,77 @@ plugin entries:
 }
 ```
 
-After a successful native compilation, dev-tools applies the following output
-transforms before generating CommonJS exports:
+Native builds read these entries as standalone output transforms, without loading
+or patching the native compiler. Each transform is optional. A package with no
+plugins performs a normal native compilation and CommonJS build. Monorepos use
+the usual ocular package order; each package's selected tsconfig determines its
+transforms. Import rewriting and version injection do not resolve constants tables or depend
+on a consumer repository layout. The plugin package retains its existing standard
+WebGL constants dependency for consumers selecting that optional transform.
 
-- Replace `__VERSION__` (or the configured `identifier`) using the nearest source
-  package's `package.json` version.
-- Inline known `GL.CONSTANT`, `gl.CONSTANT`, and string-indexed WebGL constants.
-  The values come from `@luma.gl/constants`. The repository-local
-  `@luma.gl/ts-transform-inline-webgl-constants` entry is also recognized and uses
-  luma.gl's bootstrapped `modules/core/dist/webgl-constants/index.cjs` when present.
-  To use another constants-only CommonJS module exporting `GL`, set the plugin's
-  `constantsModule` to a package name or a path relative to the selected tsconfig.
-- Strip GLSL comments and excess line whitespace in `glsl` tagged templates and
-  templates selected by the plugin's `pattern` globs. Interpolations remain intact.
-- Append configured extensions to relative imports, re-exports, and literal
-  dynamic imports in JavaScript, and to module references in declarations,
-  including `import('./module').Type`. Package imports and other strings remain
-  untouched. The declaration pass requires `afterDeclarations: true`.
+The extension transform handles relative imports, re-exports, literal dynamic
+imports, and declaration module references such as `import('./module').Type`.
+Package imports and unrelated strings remain intact. `extensions` also supports
+suffix mappings such as `.lib.cjs`. Configure `afterDeclarations` explicitly for
+declaration references.
 
-Edits are composed with the compiler's JavaScript and declaration source maps.
-The compiler's emitted-file list determines which outputs are processed, including
-a separate `declarationDir`; source filenames come from compiler inputs, so
-debugger-only `sourceRoot` URLs do not affect version or shader transforms.
-Source files are never rewritten. Native builds currently re-emit the selected
-package in full, overriding `incremental` and `composite` for that invocation to
-avoid post-processing already transformed output on an incremental rebuild.
-Project references still require their dependencies to have been built first,
-following the normal ocular package build order.
+### Optional version and shader transforms
 
-Unsupported transformer entries fail explicitly, including `ts-transform-webgpu`;
-they are not silently ignored. This path supports the four transformers used in
-luma.gl, rather than arbitrary `ts-patch` plugins. The rest of the consuming
-repository's compiler options must also be compatible with TypeScript 7 (for
-example, use a supported module resolution mode).
+Add any of these entries to the same plugin array as needed:
+
+```json
+{"transform": "@vis.gl/ts-plugins/ts-transform-version-inline", "identifier": "__VERSION__"}
+```
+
+This replaces the configured identifier using the nearest source package's
+`package.json`. It also supports shorthand properties such as `{__VERSION__}`.
+Different packages in a monorepo retain their own versions.
+
+```json
+{"transform": "@vis.gl/ts-plugins/ts-transform-remove-glsl-comments", "pattern": ["src/**/*.glsl.ts"]}
+```
+
+This cleans shader comments and excess line whitespace inside `glsl` tagged
+templates and templates selected by `pattern`. Interpolations remain intact.
+
+```json
+{
+  "transform": "@vis.gl/ts-plugins/ts-transform-inline-webgl-constants",
+  "constantsModule": "./build/constants.cjs",
+  "pruneImports": true
+}
+```
+
+The native adapter replaces known numeric `GL.CONSTANT`, `gl.CONSTANT`, and
+string-indexed constants. `constantsModule` may be a package name or a file path
+relative to the tsconfig and must export a `GL` table. If omitted, the shared
+plugin package's `@luma.gl/constants` dependency supplies the standard WebGL table.
+Enum reverse mappings remain unchanged. Unused named imports from known constants
+modules are pruned; set `pruneImports: false` to keep them.
+
+There is no special handling for luma.gl's repository layout. A consumer using
+its own bootstrapped constants must configure that module explicitly. Legacy
+plugin prefixes are recognized by transform basename, consistently across lookup
+and pruning. Repository-local plugins with that basename must use these explicit
+options to select different behavior. `constantsModule` and `pruneImports` are shared options supported by both the
+native adapter and the patched WebGL plugin.
+
+### Packaging and limitations
+
+Standalone transforms live in `@vis.gl/ts-plugins/output-transforms`, with shared
+version, extension, GLSL cleanup, and constants-module rules also used by the
+patched plugin implementations. The compiler runner only orchestrates compilation,
+output processing, and source-map composition.
+
+Edits compose with JavaScript and declaration source maps. The compiler's emitted
+file list includes separate `declarationDir` output; source filenames come from
+compiler inputs, so debugger-only `sourceRoot` URLs do not affect transforms.
+Source files are never rewritten.
+
+Native builds currently re-emit the selected package in full, overriding
+`incremental` and `composite` for that invocation to avoid transforming previously
+processed output again. Referenced dependencies must be built first. `outFile`
+is unsupported. Other compiler options must be compatible with TypeScript 7.
+Unsupported transformers, including `ts-transform-webgpu`, fail explicitly rather
+than being ignored. Supporting the four shared output transforms does not imply
+support for arbitrary ts-patch plugins.

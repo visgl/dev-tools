@@ -12,8 +12,11 @@ build_module() {
   # Build esm entry point
   if [ "$TS_COMPILER" = "native" ]; then
     node "$DEV_TOOLS_DIR/dist/native-build.js" "$TS_PROJECT"
-  else
+  elif [ -z "$TS_COMPILER" ] || [ "$TS_COMPILER" = "patched" ]; then
     (set -x; npx tspc --declaration --declarationMap --sourceMap --outDir dist --project $TS_PROJECT)
+  else
+    echo "Unknown typescript.compiler: $TS_COMPILER" >&2
+    exit 1
   fi
 
   # Build common JS entry point

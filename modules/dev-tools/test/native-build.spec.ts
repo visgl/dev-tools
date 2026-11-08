@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
-import {transformOutput} from '../src/native-build.js';
+import {transformOutput, loadConstants} from '@vis.gl/ts-plugins/output-transforms';
 
 const plugins = [
   {transform: '@vis.gl/ts-plugins/ts-transform-version-inline'},
@@ -248,4 +248,140 @@ test('numeric constant replacements remain valid before property access', () => 
     'return [GL.TRIANGLES.toString(16), gl["TRIANGLES"].toString(), GL.TRIANGLES?.toString()];';
   const transformed = transformOutput(source, '/project/index.js', plugins, {TRIANGLES: 4});
   expect(new Function(transformed.code)()).toEqual(['4', '4', '4']);
+});
+
+test('constants resolution supports explicit files, packages, defaults, and no graphics plugin', () => {
+  const directory = mkdtempSync(path.join(tmpdir(), 'ocular-constants-'));
+  try {
+    const config = path.join(directory, 'tsconfig.json');
+    const plugin = {transform: '@vis.gl/ts-plugins/ts-transform-inline-webgl-constants'};
+    writeFileSync(path.join(directory, 'custom.cjs'), 'exports.GL = {CUSTOM: 71};');
+    mkdirSync(path.join(directory, 'node_modules/custom-constants'), {recursive: true});
+    writeFileSync(
+      path.join(directory, 'node_modules/custom-constants/package.json'),
+      '{"main":"index.cjs"}'
+    );
+    writeFileSync(
+      path.join(directory, 'node_modules/custom-constants/index.cjs'),
+      'exports.GL = {CUSTOM: 72};'
+    );
+    expect(loadConstants([], config)).toEqual({});
+    expect(loadConstants([{...plugin, constantsModule: './custom.cjs'}], config)).toEqual({
+      CUSTOM: 71
+    });
+    expect(loadConstants([{...plugin, constantsModule: 'custom-constants'}], config)).toEqual({
+      CUSTOM: 72
+    });
+    expect(loadConstants([plugin], config).TRIANGLES).toBe(4);
+    expect(() => loadConstants([{...plugin, constantsModule: './missing.cjs'}], config)).toThrow();
+  } finally {
+    rmSync(directory, {recursive: true, force: true});
+  }
+});
+
+test('version shorthand and reverse enum lookups preserve valid JavaScript', () => {
+  const versioned = transformOutput(
+    'return {__VERSION__};',
+    fileURLToPath(new URL('../src/index.ts', import.meta.url)),
+    plugins
+  ).code;
+  expect(new Function(versioned)()).toHaveProperty('__VERSION__', '2.0.0-beta.1');
+  const constants = {TRIANGLES: 4, '4': 'TRIANGLES'} as unknown as Record<string, number>;
+  expect(
+    transformOutput('GL["4"]; GL.TRIANGLES;', '/project/index.js', plugins, constants).code
+  ).toBe('GL["4"]; 4;');
+});
+
+test.each([
+  '@vis.gl/ts-plugins',
+  'ocular-dev-tools',
+  '@framework/custom'
+])('constant pruning uses the same transform matching for %s', (prefix) => {
+  const configured = [{transform: `${prefix}/ts-transform-inline-webgl-constants`}];
+  expect(
+    transformOutput(
+      "import {GL} from '@luma.gl/constants'; export const mode = GL.TRIANGLES;",
+      '/project/index.js',
+      configured,
+      {TRIANGLES: 4}
+    ).code
+  ).toBe(' export const mode = 4;');
+  expect(
+    transformOutput(
+      "import {GL} from '@luma.gl/constants'; export const mode = GL.TRIANGLES;",
+      '/project/index.js',
+      [{...configured[0], pruneImports: false}],
+      {TRIANGLES: 4}
+    ).code
+  ).toContain('import {GL}');
+});
+
+test('native monorepo builds packages with independent versions and no graphics transforms', () => {
+  const directory = mkdtempSync(path.join(tmpdir(), 'ocular-framework-'));
+  const require = createRequire(import.meta.url);
+  try {
+    mkdirSync(path.join(directory, 'node_modules'));
+    symlinkSync(
+      path.dirname(require.resolve('typescript-native/package.json')),
+      path.join(directory, 'node_modules/typescript'),
+      'junction'
+    );
+    writeFileSync(
+      path.join(directory, 'package.json'),
+      '{"name":"framework","type":"module","version":"0.0.0"}'
+    );
+    writeFileSync(
+      path.join(directory, '.ocularrc.js'),
+      `export default {typescript: {project: 'tsconfig.json', compiler: 'native'}};`
+    );
+    for (const [name, version] of [
+      ['math', '3.2.1'],
+      ['logging', '4.5.6']
+    ]) {
+      const module = path.join(directory, 'modules', name);
+      mkdirSync(path.join(module, 'src'), {recursive: true});
+      writeFileSync(
+        path.join(module, 'package.json'),
+        JSON.stringify({name, version, type: 'module'})
+      );
+      writeFileSync(
+        path.join(module, 'tsconfig.json'),
+        JSON.stringify({
+          compilerOptions: {
+            target: 'esnext',
+            module: 'esnext',
+            moduleResolution: 'bundler',
+            rootDir: 'src',
+            types: [],
+            plugins: plugins.filter((plugin) => !/webgl|glsl/.test(plugin.transform))
+          },
+          include: ['src']
+        })
+      );
+      writeFileSync(
+        path.join(module, 'src/index.ts'),
+        "declare const __VERSION__: string; export const version = __VERSION__; export {value} from './value';"
+      );
+      writeFileSync(path.join(module, 'src/value.ts'), 'export const value = 42;');
+    }
+    const cli = fileURLToPath(new URL('../scripts/build.sh', import.meta.url));
+    execFileSync('bash', [cli], {cwd: directory, encoding: 'utf8'});
+    for (const [name, version] of [
+      ['math', '3.2.1'],
+      ['logging', '4.5.6']
+    ]) {
+      const module = path.join(directory, 'modules', name);
+      expect(require(path.join(module, 'dist/index.cjs')).version).toBe(version);
+      expect(readFileSync(path.join(module, 'dist/index.d.ts'), 'utf8')).toContain("'./value.js'");
+    }
+    writeFileSync(
+      path.join(directory, '.ocularrc.js'),
+      `export default {typescript: {project: 'tsconfig.json', compiler: 'Native'}};`
+    );
+    const invalid = spawnSync('bash', [cli], {cwd: directory, encoding: 'utf8'});
+    expect(invalid.status).not.toBe(0);
+    expect(invalid.stderr).toContain('Unknown typescript.compiler: Native');
+  } finally {
+    rmSync(directory, {recursive: true, force: true});
+  }
 });

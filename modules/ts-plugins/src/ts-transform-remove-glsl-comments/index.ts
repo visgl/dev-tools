@@ -17,11 +17,8 @@ import * as path from 'path';
 import type {Program, TransformationContext, SourceFile, Node} from 'typescript';
 import type {TransformerExtras, PluginConfig} from 'ts-patch';
 import minimatch from 'minimatch';
+import {filterShaderSource} from '../transform-rules.js';
 
-// inline comment is only safe to remove if it's followed by a return (i.e. end of comment)
-const INLINE_COMMENT_REGEX = /\s*\/\/.*[\n\r]/g;
-const BLOCK_COMMENT_REGEX = /\s*\/\*(\*(?!\/)|[^*])*\*\//g;
-const WHITESPACE_REGEX = /\s*[\n\r]\s*/gm;
 const DEFAULT_PATTERNS = [];
 
 type RemoveGLSLCommentsPluginConfig = PluginConfig & {
@@ -99,11 +96,4 @@ function matchFilePath(filePath: string, includePatterns: string[]): boolean {
     }
   }
   return false;
-}
-
-function filterShaderSource(source: string): string {
-  return source
-    .replace(INLINE_COMMENT_REGEX, '\n')
-    .replace(BLOCK_COMMENT_REGEX, '')
-    .replace(WHITESPACE_REGEX, '\n');
 }
