@@ -280,12 +280,18 @@ test('constants resolution supports explicit files, packages, defaults, and no g
 });
 
 test('version shorthand and reverse enum lookups preserve valid JavaScript', () => {
-  const versioned = transformOutput(
-    'return {__VERSION__};',
-    fileURLToPath(new URL('../src/index.ts', import.meta.url)),
-    plugins
-  ).code;
-  expect(new Function(versioned)()).toHaveProperty('__VERSION__', '2.0.0-beta.1');
+  const directory = mkdtempSync(path.join(tmpdir(), 'ocular-version-'));
+  try {
+    writeFileSync(path.join(directory, 'package.json'), JSON.stringify({version: '1.2.3'}));
+    const versioned = transformOutput(
+      'return {__VERSION__};',
+      path.join(directory, 'index.js'),
+      plugins
+    ).code;
+    expect(new Function(versioned)()).toHaveProperty('__VERSION__', '1.2.3');
+  } finally {
+    rmSync(directory, {recursive: true, force: true});
+  }
   const constants = {TRIANGLES: 4, '4': 'TRIANGLES'} as unknown as Record<string, number>;
   expect(
     transformOutput('GL["4"]; GL.TRIANGLES;', '/project/index.js', plugins, constants).code
