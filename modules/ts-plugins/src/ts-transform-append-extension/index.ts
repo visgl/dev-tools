@@ -12,7 +12,7 @@
    }
  * Adapted from https://github.com/murolem/ts-transformer-append-js-extension to support custom extensions
  */
-import * as path from 'path';
+import {appendExtension} from '../transform-rules.js';
 import type {Program, TransformationContext, SourceFile, Node} from 'typescript';
 import type {TransformerExtras, PluginConfig} from 'ts-patch';
 
@@ -32,21 +32,10 @@ export default function (
 ) {
   // only append .js when module specifier has no extension or user-provided extensions
   const {extensions = ['.js']} = pluginConfig;
-  const extMappings = new Map<string, string>();
-  for (const ext of extensions) {
-    const addition = path.extname(ext) || ext;
-    const base = path.basename(ext, addition);
-    extMappings.set(base, addition);
-  }
-
   function shouldMutateImportSource(node: Node | undefined): string | false {
     if (!node || !ts.isStringLiteral(node)) return false;
-    // only when path is relative
-    if (!node.text.startsWith('./') && !node.text.startsWith('../')) return false;
-    // only when module specifier has accepted extension
-    const ext = path.extname(node.text);
-    if (!extMappings.has(ext)) return false;
-    return node.text + extMappings.get(ext);
+    const rewritten = appendExtension(node.text, extensions);
+    return rewritten === node.text ? false : rewritten;
   }
 
   return (ctx: TransformationContext) => {

@@ -12,15 +12,21 @@
  */
 import type {Program, TransformationContext, SourceFile, Node} from 'typescript';
 import type {TransformerExtras, PluginConfig} from 'ts-patch';
-import {GL} from '@luma.gl/constants';
+import {GL as standardGL} from '@luma.gl/constants';
+import path from 'node:path';
 
-const WEBGL_CONSTANT_MODULES = new Set([
-  '@luma.gl/constants',
-  '@luma.gl/webgl/constants',
-  'luma.gl/constants'
-]);
+import {WEBGL_CONSTANT_MODULES, resolveConstantTable} from '../transform-rules.js';
 
-export default function (program: Program, pluginConfig: PluginConfig, {ts}: TransformerExtras) {
+export default function (
+  program: Program,
+  pluginConfig: PluginConfig & {constantsModule?: string; pruneImports?: boolean},
+  {ts}: TransformerExtras
+) {
+  const configPath = String(
+    program.getCompilerOptions().configFilePath ??
+      path.resolve(program.getCurrentDirectory(), 'tsconfig.json')
+  );
+  const GL = resolveConstantTable(pluginConfig.constantsModule, configPath, () => standardGL);
   return (ctx: TransformationContext) => {
     const {factory} = ctx;
 
@@ -36,13 +42,13 @@ export default function (program: Program, pluginConfig: PluginConfig, {ts}: Tra
         }
         if (ts.isPropertyAccessExpression(node) && filterLeftIdentifier(node)) {
           const key = node.getChildAt(2);
-          if (ts.isIdentifier(key) && key.text in GL) {
+          if (ts.isIdentifier(key) && typeof GL[key.text] === 'number') {
             return factory.createNumericLiteral(GL[key.text]);
           }
         }
         if (ts.isElementAccessExpression(node) && filterLeftIdentifier(node)) {
           const key = node.getChildAt(2);
-          if (ts.isStringLiteral(key) && key.text in GL) {
+          if (ts.isStringLiteral(key) && typeof GL[key.text] === 'number') {
             return factory.createNumericLiteral(GL[key.text]);
           }
         }
@@ -50,6 +56,7 @@ export default function (program: Program, pluginConfig: PluginConfig, {ts}: Tra
       }
 
       const transformedSourceFile = ts.visitEachChild(sourceFile, visit, ctx);
+      if (pluginConfig.pruneImports === false) return transformedSourceFile;
       const runtimeIdentifiers = getRuntimeIdentifiers(transformedSourceFile);
 
       const statements = transformedSourceFile.statements.flatMap((statement) => {

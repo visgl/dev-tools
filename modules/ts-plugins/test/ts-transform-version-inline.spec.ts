@@ -35,3 +35,8 @@ test('ts-transform-version-inline', () => {
     expect(assertSourceEqual(result, testCase.output), testCase.title).toBe(true);
   }
 });
+
+test('version shorthand preserves its property name', () => {
+  const result = transpile({source: 'const version = {__VERSION__};', transformer: versionInline});
+  expect(assertSourceEqual(result, 'const version = { __VERSION__: "0.0.0" };')).toBe(true);
+});

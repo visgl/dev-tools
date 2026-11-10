@@ -43,17 +43,29 @@
     "./ts-transform-webgpu": {
       "require": "./dist/ts-transform-webgpu/index.cjs",
       "import": "./dist/ts-transform-webgpu/index.js"
+    },
+    "./output-transforms": {
+      "types": "./dist/output-transforms.d.ts",
+      "import": "./dist/output-transforms.js"
     }
   },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "dependencies": {
     "@luma.gl/constants": "^9.0.0",
+    "magic-string": "^0.30.21",
     "minimatch": "^3.0.0",
     "ts-patch": "^4.0.1",
     "typescript": "^6.0.3"
   },
   "engines": {
     "node": ">= 22.15"
+  },
+  "typesVersions": {
+    "*": {
+      "output-transforms": [
+        "dist/output-transforms.d.ts"
+      ]
+    }
   }
 }

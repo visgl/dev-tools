@@ -6,9 +6,18 @@ DEV_TOOLS_DIR=$(dirname $0)/..
 MODULES=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".modules" | sed -E "s/,/ /g"`
 TS_PROJECT=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".typescript.project"`
 
+TS_COMPILER=`node $DEV_TOOLS_DIR/dist/helpers/get-config.js ".typescript.compiler"`
+
 build_module() {
   # Build esm entry point
-  (set -x; npx tspc --declaration --declarationMap --sourceMap --outDir dist --project $TS_PROJECT)
+  if [ "$TS_COMPILER" = "native" ]; then
+    node "$DEV_TOOLS_DIR/dist/native-build.js" "$TS_PROJECT"
+  elif [ -z "$TS_COMPILER" ] || [ "$TS_COMPILER" = "patched" ]; then
+    (set -x; npx tspc --declaration --declarationMap --sourceMap --outDir dist --project $TS_PROJECT)
+  else
+    echo "Unknown typescript.compiler: $TS_COMPILER" >&2
+    exit 1
+  fi
 
   # Build common JS entry point
   node $DEV_TOOLS_DIR/dist/build-cjs.js

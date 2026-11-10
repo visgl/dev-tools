@@ -10,8 +10,7 @@
       ]
    }
  */
-import * as fs from 'fs';
-import * as path from 'path';
+import {getPackageVersion} from '../transform-rules.js';
 import type {Program, TransformationContext, SourceFile, Node} from 'typescript';
 import type {TransformerExtras, PluginConfig} from 'ts-patch';
 
@@ -33,9 +32,17 @@ export default function (
     const {factory} = ctx;
 
     return (sourceFile: SourceFile) => {
-      let packageVersion: string | null;
+      let packageVersion: string | undefined;
 
       function visit(node: Node): Node {
+        if (ts.isShorthandPropertyAssignment(node) && node.name.text === identifier) {
+          const version = getPackageVersion(sourceFile.fileName);
+          if (version)
+            return factory.createPropertyAssignment(
+              node.name,
+              factory.createStringLiteral(version)
+            );
+        }
         if (
           ts.isIdentifier(node) &&
           !ts.isPropertyAccessExpression(node.parent) &&
@@ -45,6 +52,7 @@ export default function (
             packageVersion = getPackageVersion(sourceFile.fileName);
           }
           if (packageVersion) {
+            if (ts.isShorthandPropertyAssignment(node.parent)) return node;
             return factory.createStringLiteral(packageVersion);
           }
         }
@@ -53,25 +61,4 @@ export default function (
       return ts.visitNode(sourceFile, visit);
     };
   };
-}
-
-/**
- * Retrieve the version string from the closest package.json
- */
-function getPackageVersion(fileName: string): string | null {
-  let currentDir = fileName;
-  while (currentDir !== '/') {
-    try {
-      currentDir = path.dirname(currentDir);
-      const packageJson = path.join(currentDir, 'package.json');
-      const stat = fs.statSync(packageJson);
-      if (stat.isFile()) {
-        const content = fs.readFileSync(packageJson, 'utf8');
-        return JSON.parse(content).version as string;
-      }
-    } catch {
-      // file does not exist, try going up
-    }
-  }
-  return null;
 }

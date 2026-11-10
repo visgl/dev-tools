@@ -107,3 +107,8 @@ test('ts-transform-inline-webgl-constants', () => {
     expect(assertSourceEqual(result, testCase.output), testCase.title).toBe(true);
   }
 });
+
+test('reverse enum access is preserved', () => {
+  const result = transpile({source: 'console.log(GL["4"]);', transformer: inlineConstants});
+  expect(result).toContain('GL["4"]');
+});
