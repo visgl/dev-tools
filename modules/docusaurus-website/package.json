@@ -46,10 +46,10 @@
     "@docusaurus/plugin-client-redirects": "^3.10.2",
     "@docusaurus/plugin-content-docs": "^3.10.2",
     "@docusaurus/preset-classic": "^3.10.2",
+    "@fastify/deepmerge": "^3.2.4",
     "@mdx-js/react": "^3.0.0",
     "babel-plugin-styled-components": "^2.0.0",
     "cheerio": "1.0.0-rc.9",
-    "deepmerge": "^4.2.2",
     "glob": "^7.1.4",
     "prism-react-renderer": "^2.3.0",
     "styled-components": "^5.3.3"

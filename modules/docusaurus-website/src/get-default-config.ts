@@ -1,12 +1,13 @@
 import fs from 'fs';
 import {resolve, dirname} from 'path';
-import deepmerge from 'deepmerge';
+import createDeepmerge from '@fastify/deepmerge';
 import type {Config, PluginConfig} from '@docusaurus/types';
 import type {NavbarItem} from '@docusaurus/theme-common';
 import type {Options as ClassicThemeOptions, ThemeConfig} from '@docusaurus/preset-classic';
 import {themes} from 'prism-react-renderer';
 
 const cwd = dirname(typeof require === 'undefined' ? import.meta.url : __filename);
+const deepmerge = createDeepmerge({symbols: true});
 const lightCodeTheme = themes.nightOwlLight;
 const darkCodeTheme = themes.nightOwl;
 
