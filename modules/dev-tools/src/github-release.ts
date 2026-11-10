@@ -37,15 +37,28 @@ if (releaseNotes === null) {
 createRelease();
 
 async function createRelease() {
+  const headers = {
+    Authorization: `token ${token}`,
+    Accept: 'application/vnd.github.v3+json'
+  };
+
+  // A re-run of a partially failed publish finds the release from the first run
+  // https://docs.github.com/en/rest/releases/releases#get-a-release-by-tag-name
+  const existing = await fetch(
+    `https://api.github.com/repos/${repository}/releases/tags/${encodeURIComponent(tag!)}`,
+    {headers}
+  );
+  if (existing.ok) {
+    console.log(`Release already exists: https://github.com/${repository}/releases/tag/${tag}`);
+    return;
+  }
+
   // Publish release notes to GitHub
   // https://docs.github.com/en/rest/reference/repos#create-a-release
   const url = `https://api.github.com/repos/${repository}/releases`;
   const resp = await fetch(url, {
     method: 'POST',
-    headers: {
-      Authorization: `token ${token}`,
-      Accept: 'application/vnd.github.v3+json'
-    },
+    headers,
     body: JSON.stringify({
       tag_name: tag,
       name: tag,
