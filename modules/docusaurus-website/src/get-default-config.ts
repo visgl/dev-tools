@@ -1,13 +1,12 @@
 import fs from 'fs';
 import {resolve, dirname} from 'path';
-import createDeepmerge from '@fastify/deepmerge';
+import {mergeConfig} from './merge-config.js';
 import type {Config, PluginConfig} from '@docusaurus/types';
 import type {NavbarItem} from '@docusaurus/theme-common';
 import type {Options as ClassicThemeOptions, ThemeConfig} from '@docusaurus/preset-classic';
 import {themes} from 'prism-react-renderer';
 
 const cwd = dirname(typeof require === 'undefined' ? import.meta.url : __filename);
-const deepmerge = createDeepmerge({symbols: true});
 const lightCodeTheme = themes.nightOwlLight;
 const darkCodeTheme = themes.nightOwl;
 
@@ -174,7 +173,7 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
         '@vis.gl/docusaurus-website/plugin-webpack-config',
         {
           ...webpackConfig,
-          resolve: deepmerge(
+          resolve: mergeConfig(
             {
               modules: [resolve('node_modules'), resolve(rootDir, 'node_modules')],
               alias: getAliases(rootDir)
@@ -203,7 +202,7 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
       ...plugins
     ].filter(Boolean),
 
-    themeConfig: deepmerge(
+    themeConfig: mergeConfig(
       {
         navbar: {
           title: projectName,

@@ -4883,13 +4883,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fastify/deepmerge@npm:^3.2.4":
-  version: 3.2.4
-  resolution: "@fastify/deepmerge@npm:3.2.4"
-  checksum: 10c0/3c6187e910c220de902ec09de7b51894e439a49431b4a8cdbabce07342f93411de8b12530365fc8fc4dd430e1a614b5d6bbd296854c4efeeed2352d37aad8763
-  languageName: node
-  linkType: hard
-
 "@gar/promise-retry@npm:^1.0.0, @gar/promise-retry@npm:^1.0.2, @gar/promise-retry@npm:^1.0.3":
   version: 1.0.3
   resolution: "@gar/promise-retry@npm:1.0.3"
@@ -7784,7 +7777,6 @@ __metadata:
     "@docusaurus/plugin-client-redirects": "npm:^3.10.2"
     "@docusaurus/plugin-content-docs": "npm:^3.10.2"
     "@docusaurus/preset-classic": "npm:^3.10.2"
-    "@fastify/deepmerge": "npm:^3.2.4"
     "@mdx-js/react": "npm:^3.0.0"
     babel-plugin-styled-components: "npm:^2.0.0"
     cheerio: "npm:1.0.0-rc.9"
