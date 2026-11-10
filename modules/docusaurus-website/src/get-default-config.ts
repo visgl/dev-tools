@@ -1,6 +1,6 @@
 import fs from 'fs';
 import {resolve, dirname} from 'path';
-import deepmerge from 'deepmerge';
+import {mergeConfig} from './merge-config.js';
 import type {Config, PluginConfig} from '@docusaurus/types';
 import type {NavbarItem} from '@docusaurus/theme-common';
 import type {Options as ClassicThemeOptions, ThemeConfig} from '@docusaurus/preset-classic';
@@ -173,7 +173,7 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
         '@vis.gl/docusaurus-website/plugin-webpack-config',
         {
           ...webpackConfig,
-          resolve: deepmerge(
+          resolve: mergeConfig(
             {
               modules: [resolve('node_modules'), resolve(rootDir, 'node_modules')],
               alias: getAliases(rootDir)
@@ -202,7 +202,7 @@ export function getDocusaurusConfig(config: OcularWebsiteConfig): Config {
       ...plugins
     ].filter(Boolean),
 
-    themeConfig: deepmerge(
+    themeConfig: mergeConfig(
       {
         navbar: {
           title: projectName,
