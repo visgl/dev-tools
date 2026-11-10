@@ -114,3 +114,34 @@ test('mergeConfig rejects cyclic data while accepting repeated non-cyclic refere
   expect(result.right).not.toBe(shared);
   expect(mergeConfig(shared, shared)).toEqual(shared);
 });
+
+test('mergeConfig remains data-only when descriptor fields are inherited from a polluted prototype', () => {
+  const source = {safe: {value: 1}};
+  const getter = () => {
+    throw new Error('Accessor must not execute');
+  };
+  Object.defineProperty(source, 'accessor', {enumerable: true, get: getter});
+  Object.defineProperty(source, '$$typeof', {enumerable: true, get: getter});
+  const keys = ['value', 'get', 'set'];
+  const previous = keys.map(
+    (key) => [key, Object.getOwnPropertyDescriptor(Object.prototype, key)] as const
+  );
+  let result: unknown;
+  try {
+    Object.defineProperties(Object.prototype, {
+      value: {value: Symbol.for('react.element'), configurable: true},
+      get: {value: getter, configurable: true},
+      set: {value: getter, configurable: true}
+    });
+    result = mergeConfig({}, source);
+  } finally {
+    for (const key of keys) Reflect.deleteProperty(Object.prototype, key);
+    for (const [key, property] of previous) {
+      if (property) Object.defineProperty(Object.prototype, key, property);
+    }
+  }
+  expect(result).toEqual({safe: {value: 1}});
+  expect(result === source).toBe(false);
+  expect(Object.hasOwn(result as object, 'accessor')).toBe(false);
+  expect(Object.hasOwn(result as object, '$$typeof')).toBe(false);
+});

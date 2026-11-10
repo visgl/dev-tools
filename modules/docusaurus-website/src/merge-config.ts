@@ -5,7 +5,8 @@ function isRecord(value: unknown): value is Record<PropertyKey, unknown> {
   if (!value || typeof value !== 'object') return false;
   const prototype = Object.getPrototypeOf(value);
   if (prototype !== Object.prototype && prototype !== null) return false;
-  return !reactTags.has(Object.getOwnPropertyDescriptor(value, '$$typeof')?.value);
+  const tag = Object.getOwnPropertyDescriptor(value, '$$typeof');
+  return !tag || !Object.hasOwn(tag, 'value') || !reactTags.has(tag.value);
 }
 
 function ownData(value: object): [PropertyKey, unknown][] {
@@ -13,13 +14,19 @@ function ownData(value: object): [PropertyKey, unknown][] {
   for (const key of Reflect.ownKeys(value)) {
     if (typeof key === 'string' && unsafeKeys.has(key)) continue;
     const property = Object.getOwnPropertyDescriptor(value, key);
-    if (property?.enumerable && 'value' in property) entries.push([key, property.value]);
+    if (property?.enumerable && Object.hasOwn(property, 'value'))
+      entries.push([key, property.value]);
   }
   return entries;
 }
 
 function setOwn(target: object, key: PropertyKey, value: unknown) {
-  Object.defineProperty(target, key, {value, enumerable: true, configurable: true, writable: true});
+  const property: PropertyDescriptor = Object.create(null);
+  property.value = value;
+  property.enumerable = true;
+  property.configurable = true;
+  property.writable = true;
+  Object.defineProperty(target, key, property);
 }
 
 function visit<T>(value: object, ancestors: Set<object>, callback: () => T): T {
